@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>منيو Hayah Kitchen الفاخر</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Hayah Kitchen">
+    <link rel="apple-touch-icon" href="./images/logo.jpg">
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        /* الهوية البصرية - الوضع المضيء */
+        :root {
+            --premium-red: #be123c;       
+            --premium-red-dark: #881337;  
+            --premium-green: #10b981;     
+            
+            --bg-dark: #f8fafc;           
+            --card-dark: #ffffff;         
+            --card-border: rgba(190, 18, 60, 0.08);
+            --text-main: #0f172a;         
+            --text-muted: #64748b;        
+            --glow-color: rgba(190, 18, 60, 0.2); 
+            --nav-bg: rgba(248, 250, 252, 0.98);
+            --item-bg: #e2e8f0;
+            --box-bg: #f1f5f9;
+        }
+
+        /* ألوان الوضع الداكن */
+        body.dark-mode {
+            --bg-dark: #070708;           
+            --card-dark: #121215;         
+            --card-border: rgba(190, 18, 60, 0.15);
+            --text-main: #ffffff;         
+            --text-muted: #94a3b8;        
+            --glow-color: rgba(190, 18, 60, 0.4); 
+            --nav-bg: rgba(7, 7, 8, 0.98);
+            --item-bg: #161619;
+            --box-bg: #18181c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+            line-height: 1.5;
+            padding-top: 235px; 
+        }
+
+        /* حماية العناصر من الظهور العشوائي قبل انتهاء التحميل */
+        .super-fixed-header, .grid-menu-container, .restaurant-footer {
+            display: none !important;
+        }
+
+        body.app-ready .super-fixed-header { display: block !important; }
+        body.app-ready .grid-menu-container { display: grid !important; }
+        body.app-ready .restaurant-footer { display: flex !important; }
+
+        /* ----------------------------------------------------
+           شاشة التحميل السينمائية
+        ------------------------------------------------------- */
+        #premium-splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #1a0b0e 0%, #070708 100%);
+            z-index: 99999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.5s ease, visibility 0.5s;
+        }
+
+        .splash-container {
+            text-align: center;
+            width: 85%;
+            max-width: 400px;
+        }
+
+        .splash-logo-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+
+        .splash-logo {
+            width: 145px;
+            height: 145px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--premium-red);
+            box-shadow: 0 0 35px var(--glow-color);
+            animation: premiumPulseGlow 3.5s ease-in-out infinite;
+        }
+
+        .splash-title {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #ffffff;
+            margin-bottom: 8px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: premiumFadeUp 0.5s ease forwards 0.2s;
+        }
+
+        .splash-slogan {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--premium-red);
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: premiumFadeUp 0.5s ease forwards 0.4s;
+        }
+
+        .premium-bar-track {
+            width: 240px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 0 auto;
+            position: relative;
+            opacity: 0;
+            animation: premiumFadeUp 0.5s ease forwards 0.5s;
+        }
+
+        .premium-bar-fill {
+            display: block;
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--premium-red-dark), var(--premium-red));
+            border-radius: 20px;
+            box-shadow: 0 0 10px var(--premium-red);
+            transition: width 0.035s linear; 
+        }
+
+        .premium-counter-text {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #94a3b8;
+            margin-top: 14px;
+            opacity: 0;
+            animation: premiumFadeUp 0.5s ease forwards 0.6s;
+        }
+        .premium-counter-text span { color: var(--premium-red); }
+
+        @keyframes premiumPulseGlow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+        @keyframes premiumFadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        .splash-hidden {
+            opacity: 0 !important;
+            pointer-events: none;
+            visibility: hidden !important;
+        }
+
+        /* ----------------------------------------------------
+           الهيدر وتكبير صورة اللوجو الفخم
+        ------------------------------------------------------- */
+        .super-fixed-header {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            width: 100%;
+            max-width: 550px;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(190, 18, 60, 0.1);
+            padding: 14px 14px 10px 14px; 
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .hero-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 14px;
+        }
+
+        .identity-center-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            flex: 1;
+        }
+
+        .hero-logo {
+            width: 105px;
+            height: 105px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--premium-red);
+            box-shadow: 0 6px 22px var(--glow-color);
+            margin-bottom: 8px;
+        }
+
+        .hero-title {
+            font-size: 1.5rem; 
+            font-weight: 900;
+            color: var(--text-main);
+            line-height: 1.2;
+        }
+
+        .hero-slogan {
+            font-size: 0.9rem;
+            color: var(--premium-red);
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .theme-toggle-btn, .cart-trigger {
+            width: 44px;
+            height: 44px;
+            background: var(--card-dark);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.25rem;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.04);
+            align-self: flex-start; 
+            margin-top: 14px;
+            position: relative;
+        }
+        
+        .cart-trigger.cart-glow-success {
+            background: var(--premium-green) !important;
+            border-color: var(--premium-green);
+            color: #ffffff !important;
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px; left: -5px;
+            background: var(--premium-red); 
+            color: #ffffff;      
+            font-size: 10px; font-weight: 900;
+            width: 19px; height: 19px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid var(--card-dark);
+            box-shadow: 0 0 5px var(--glow-color);
+            transform: scale(0);
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .badge.show { transform: scale(1); }
+
+        .category-nav {
+            display: flex;
+            overflow-x: auto;
+            white-space: nowrap;
+            gap: 8px;
+            scrollbar-width: none;
+            width: 100%;
+            padding: 4px 2px;
+            border-top: 1px solid rgba(0,0,0,0.02);
+        }
+        .category-nav::-webkit-scrollbar { display: none; }
+
+        .cat-item {
+            padding: 6px 16px;
+            background: var(--box-bg);
+            border: 1px solid rgba(190, 18, 60, 0.02);
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .cat-item.active {
+            background: linear-gradient(135deg, var(--premium-red), var(--premium-red-dark));
+            color: #ffffff !important;
+            font-weight: 800;
+            box-shadow: 0 4px 12px var(--glow-color);
+            border-color: transparent;
+        }
+
+        /* ----------------------------------------------------
+           كروت المنتجات
+         ------------------------------------------------------- */
+        .grid-menu-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            padding: 14px 12px;
+            max-width: 550px;
+            margin: 0 auto;
+        }
+
+        .premium-stack-card {
+            background: var(--card-dark);
+            border-radius: 22px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.02);
+        }
+
+        .card-banner-wrapper {
+            width: 100%;
+            height: 140px;
+            background: var(--box-bg);
+            overflow: hidden;
+        }
+        .card-banner-wrapper img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+
+        .card-body-content {
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            text-align: right;
+        }
+
+        .card-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .item-main-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .item-badge-price {
+            font-size: 1rem;
+            font-weight: 900;
+            color: var(--premium-red);
+            background: rgba(190, 18, 60, 0.04);
+            padding: 4px 12px;
+            border-radius: 12px;
+            white-space: nowrap;
+            border: 1px solid rgba(190, 18, 60, 0.08);
+        }
+
+        .item-description-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        .stack-action-btn {
+            background: linear-gradient(135deg, var(--premium-red), var(--premium-red-dark));
+            color: #ffffff;
+            border: none; width: 100%;
+            padding: 12px; border-radius: 12px;
+            font-size: 0.9rem; font-weight: 800;
+            cursor: pointer; display: inline-flex;
+            align-items: center; justify-content: center; gap: 6px;
+            box-shadow: 0 4px 14px rgba(190, 18, 60, 0.15);
+        }
+
+        .stack-action-btn.added-success {
+            background: linear-gradient(135deg, #065f46, var(--premium-green)) !important;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25) !important;
+        }
+
+        .fly-item {
+            position: fixed; z-index: 99999; pointer-events: none;
+            width: 24px; height: 24px; background: var(--premium-green);
+            color: #ffffff; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 12px;
+            transition: all 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* ----------------------------------------------------
+           تحديث تصميم الفوتر بالأيقونات والبيانات الرسمية الجديدة
+        ------------------------------------------------------- */
+        .restaurant-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 26px 20px;
+            text-align: center;
+            background: var(--box-bg);
+            margin-top: 40px;
+            border-top: 1px solid rgba(190, 18, 60, 0.05);
+        }
+        
+        .footer-restaurant-contact {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .footer-restaurant-phone {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text-main);
+            text-decoration: none;
+            background: var(--card-dark);
+            padding: 8px 22px;
+            border-radius: 50px;
+            border: 1px solid var(--premium-red);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(190, 18, 60, 0.05);
+            transition: transform 0.2s ease;
+        }
+        .footer-restaurant-phone:active { transform: scale(0.96); }
+
+        .footer-social-links {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin: 6px 0;
+        }
+
+        /* تنسيق الأيقونات الرسمية الحقيقية بشكل دائري أنيق ومميز */
+        .social-icon-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 1.4rem;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            transition: transform 0.2s ease, opacity 0.2s;
+        }
+        .social-icon-btn:active { transform: scale(0.9); }
+        .social-icon-btn:hover { opacity: 0.9; }
+        
+        /* الألوان الرسمية المعتمدة للبراندات */
+        .social-icon-btn.wa-color { background-color: #25D366; }
+        .social-icon-btn.ig-color { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+
+        .footer-rights { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
+        
+        .dev-credit { 
+            font-size: 0.82rem; 
+            color: var(--text-muted); 
+            font-weight: 700; 
+            border-top: 1px dashed rgba(190, 18, 60, 0.1); 
+            padding-top: 10px; 
+            margin-top: 4px;
+        }
+        .dev-credit a { color: var(--premium-red); text-decoration: none; font-weight: 800; display: inline-block; margin-right: 4px; }
+
+        /* ----------------------------------------------------
+           مودال السلة
+        ------------------------------------------------------- */
+        .modal {
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(0,0,0,0.7); 
+            z-index: 2000;
+            display: none; 
+            justify-content: center; 
+            align-items: flex-end; 
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            background: var(--card-dark); 
+            width: 100%; 
+            max-width: 550px;
+            padding: 24px 20px; 
+            border-radius: 28px 28px 0 0;
+            max-height: 85vh; 
+            overflow-y: auto; 
+            color: var(--text-main);
+            border-top: 4px solid var(--premium-red);
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
+        }
+
+        .cart-item-card {
+            display: flex; align-items: center; justify-content: space-between; padding: 12px;
+            background: var(--box-bg); border-radius: 16px; margin-bottom: 10px; gap: 12px;
+        }
+
+        .cart-item-left { display: flex; align-items: center; gap: 12px; flex: 1; }
+        .cart-item-img { width: 45px; height: 45px; border-radius: 10px; object-fit: cover; }
+        .cart-item-info { text-align: right; }
+        .cart-item-name { font-weight: 800; font-size: 0.95rem; }
+        .cart-item-price { color: var(--premium-red); font-weight: 800; font-size: 0.85rem; display: block; }
+        .remove-btn { color: var(--premium-red); font-weight: 800; font-size: 0.85rem; cursor: pointer; }
+
+        .totals-box {
+            margin: 18px 0; padding: 14px;
+            background: rgba(190, 18, 60, 0.04); border-radius: 14px;
+            border: 1px solid rgba(190, 18, 60, 0.06);
+        }
+        .total-row { display: flex; justify-content: space-between; font-weight: 800; font-size: 1.1rem; color: var(--premium-red); }
+
+        .user-fields input {
+            background: var(--box-bg); border: 1px solid rgba(0,0,0,0.05);
+            padding: 14px; border-radius: 12px; width: 100%; margin-bottom: 10px;
+            color: var(--text-main); text-align: right; outline: none; font-weight: 600;
+        }
+        .user-fields input:focus { border-color: var(--premium-red); }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--premium-red), var(--premium-red-dark));
+            color: #ffffff; border: none; padding: 15px; border-radius: 16px;
+            width: 100%; font-weight: 800; cursor: pointer; font-size: 1rem;
+            box-shadow: 0 5px 18px rgba(190, 18, 60, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="premium-splash">
+        <div class="splash-container">
+            <div class="splash-logo-wrapper">
+                <img src="./images/logo.jpg" class="splash-logo" alt="لوجو Hayah Kitchen" onerror="this.src='https://placehold.co/300x300/be123c/ffffff?text=Hayah'">
+            </div>
+            <h2 class="splash-title">Hayah Kitchen</h2>
+            <p class="splash-slogan">أكل بيتي معمول بحب ❤️</p>
+            
+            <div class="premium-bar-track">
+                <span class="premium-bar-fill" id="splash-bar"></span>
+            </div>
+            <div class="premium-counter-text"><span id="splash-counter-num">0</span>%</div>
+        </div>
+    </div>
+
+    <div class="super-fixed-header">
+        <div class="hero-top-row">
+            <div class="theme-toggle-btn" onclick="toggleMainTheme()" id="themeBtn">☀️</div>
+            
+            <div class="identity-center-box">
+                <img src="./images/logo.jpg" class="hero-logo" alt="لوجو Hayah Kitchen" onerror="this.src='https://placehold.co/150x150/be123c/ffffff?text=Hayah'">
+                <h1 class="hero-title">Hayah Kitchen</h1>
+                <p class="hero-slogan">أكل بيتي معمول بحب ❤️</p>
+            </div>
+
+            <div class="cart-trigger" onclick="toggleCart(true)" id="cartBtn">
+                <span class="badge" id="cartBadge">0</span>
+                <span>🛒</span>
+            </div>
+        </div>
+
+        <div class="category-nav" id="catNav"></div>
+    </div>
+
+    <div id="menuList" class="grid-menu-container"></div>
+
+    <footer class="restaurant-footer">
+        
+        <div class="footer-restaurant-contact">
+            <a href="tel:01211770672" class="footer-restaurant-phone">
+                <i class="fa-solid fa-phone-volume"></i> رقم المطعم: 01211770672
+            </a>
+            
+            <div class="footer-social-links">
+                <a href="https://wa.me/201211770672" target="_blank" class="social-icon-btn wa-color" title="واتساب المطعم">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </a>
+                <a href="https://www.instagram.com/hayahkitchen?igsh=MXFwd2xoNnEycjgzeA==" target="_blank" class="social-icon-btn ig-color" title="إنستجرام المطعم">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+            </div>
+        </div>
+
+        <p class="footer-rights">جميع الحقوق محفوظة لـ Hayah Kitchen 2026 ©</p>
+        
+        <div class="dev-credit">
+            Designed by eng / Anas Gaber shehata
+            <a href="tel:01003800314">📞 01003800314</a>
+        </div>
+    </footer>
+
+    <div class="modal" id="cartModal" onclick="if(event.target==this) toggleCart(false)">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 18px; font-weight: 900; font-size: 1.3rem; color: var(--premium-red);">سلة الطلبات</h2>
+            <div id="cartItemsList"></div>
+            
+            <div class="totals-box">
+                <div class="total-row">
+                    <span>الإجمالي الكلي للطلب:</span>
+                    <span id="foodTotalAmount">0 ج.م</span>
+                </div>
+            </div>
+
+            <div class="user-fields">
+                <input type="text" id="uName" placeholder="الاسم بالكامل">
+                <input type="tel" id="uPhone" placeholder="رقم الموبايل">
+                <input type="text" id="uAddr" placeholder="العنوان بالتفصيل لسرعة التوصيل">
+            </div>
+            <button class="submit-btn" onclick="sendToWA()">تأكيد وإرسال الطلب عبر الواتساب</button>
+        </div>
+    </div>
+
+    <script>
+        const MENU_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT6wLpP2WK8y5xxWWs0r-q-aLw60OIfXtm3bsyyFFsU_SK__bAxvNozcSbENez0Iw/pub?output=csv';
+        const WHATSAPP_NUMBER = "201211770672"; 
+        
+        let menuData = [];
+        let cart = [];
+
+        function toggleMainTheme() {
+            document.body.classList.toggle('dark-mode');
+            const themeBtn = document.getElementById('themeBtn');
+            themeBtn.innerText = document.body.classList.contains('dark-mode') ? "🌙" : "☀️";
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchMenuData();
+        });
+
+        async function fetchMenuData() {
+            try {
+                const response = await fetch(MENU_CSV_URL);
+                const buffer = await response.arrayBuffer();
+                const decoder = new TextDecoder('utf-8'); 
+                const csvText = decoder.decode(buffer);
+                const rows = csvText.split(/\r?\n/).slice(1);
+
+                menuData = rows.map(row => {
+                    if (!row || !row.trim()) return null;
+                    const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    
+                    let category = columns[0]?.replace(/"/g, '').trim() || "";
+                    let name = columns[1]?.replace(/"/g, '').trim() || "";
+                    let desc = columns[2]?.replace(/"/g, '').trim() || "وجبة شهية ومميزة من مطبخ Hayah Kitchen الأصيل";
+                    let price = columns[3]?.replace(/"/g, '').trim() || "0";
+
+                    if (!category || !name) return null;
+                    return { category, name, desc, price };
+                }).filter(Boolean);
+
+                startPreloadAndLinearCounter();
+            } catch (error) {
+                document.getElementById('menuList').innerHTML = '<div style="color:var(--premium-red); text-align:center; padding:20px; font-weight:700;">⚠️ عذراً، تعذر تحميل المنيو حالياً.</div>';
+                hideSplashScreen();
+            }
+        }
+
+        function startPreloadAndLinearCounter() {
+            if (menuData.length === 0) {
+                hideSplashScreen();
+                return;
+            }
+
+            const uniqueCategories = [...new Set(menuData.map(item => item.category))];
+            uniqueCategories.forEach(cat => {
+                const img = new Image();
+                img.src = `./images/${cat}.jpg`; 
+            });
+
+            const counterNum = document.getElementById("splash-counter-num");
+            const barFill = document.getElementById("splash-bar");
+            
+            let currentPercent = 0;
+            const totalDuration = 3500; 
+            const stepTime = totalDuration / 100; 
+
+            const linearInterval = setInterval(() => {
+                currentPercent++;
+                
+                if (counterNum) counterNum.innerText = currentPercent;
+                if (barFill) barFill.style.width = currentPercent + "%";
+
+                if (currentPercent >= 100) {
+                    clearInterval(linearInterval);
+                    setTimeout(() => {
+                        hideSplashScreen();
+                        renderCategoryNavigation(uniqueCategories);
+                    }, 150); 
+                }
+            }, stepTime);
+        }
+
+        function hideSplashScreen() {
+            const splashScreen = document.getElementById("premium-splash");
+            if (splashScreen) splashScreen.classList.add("splash-hidden");
+            document.body.classList.add("app-ready");
+        }
+
+        function renderCategoryNavigation(uniqueCategories) {
+            const navContainer = document.getElementById('catNav');
+            navContainer.innerHTML = uniqueCategories.map((cat, idx) => `
+                <div class="cat-item ${idx === 0 ? 'active' : ''}" onclick="filterCategory('${cat}', this)">
+                    ${cat}
+                </div>
+            `).join('');
+
+            filterCategory(uniqueCategories[0]);
+        }
+
+        function filterCategory(category, element) {
+            if (element) {
+                document.querySelectorAll('.cat-item').forEach(item => item.classList.remove('active'));
+                element.classList.add('active');
+            }
+
+            const menuListContainer = document.getElementById('menuList');
+            menuListContainer.innerHTML = menuData.map((item, globalIdx) => {
+                if (item.category !== category) return '';
+
+                return `
+                    <div class="premium-stack-card">
+                        <div class="card-banner-wrapper">
+                            <img src="./images/${item.category}.jpg" onerror="this.src='https://placehold.co/500x220/be123c/ffffff?text=${encodeURIComponent(item.name)}'">
+                        </div>
+                        <div class="card-body-content">
+                            <div class="card-header-row">
+                                <h3 class="item-main-title">${item.name}</h3>
+                                <span class="item-badge-price">${item.price} ج.م</span>
+                            </div>
+                            <p class="item-description-text">${item.desc}</p>
+                            <button class="stack-action-btn" onclick="addItemToCart(event, this, ${globalIdx})">إضافة للسلة 🛒</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function addItemToCart(e, button, globalIdx) {
+            e.stopPropagation();
+            const item = menuData[globalIdx];
+            const existingItem = cart.find(c => c.name === item.name);
+            
+            if (existingItem) {
+                existingItem.qty += 1;
+            } else {
+                cart.push({ name: item.name, price: item.price, qty: 1, category: item.category });
+            }
+
+            if (button) {
+                button.classList.add('added-success');
+                button.innerHTML = 'تمت الإضافة! ✓';
+                setTimeout(() => {
+                    button.classList.remove('added-success');
+                    button.innerHTML = 'إضافة للسلة 🛒';
+                }, 1000);
+            }
+
+            const cartBtn = document.getElementById('cartBtn');
+            if (cartBtn) {
+                cartBtn.classList.add('cart-glow-success');
+                setTimeout(() => cartBtn.classList.remove('cart-glow-success'), 1000);
+
+                const fly = document.createElement('div');
+                fly.className = 'fly-item'; fly.innerHTML = '✨';
+                fly.style.left = e.clientX + 'px'; fly.style.top = e.clientY + 'px';
+                document.body.appendChild(fly);
+
+                const cartPos = cartBtn.getBoundingClientRect();
+                setTimeout(() => {
+                    fly.style.left = (cartPos.left + 15) + 'px';
+                    fly.style.top = (cartPos.top + 15) + 'px';
+                    fly.style.transform = 'scale(0.1) rotate(180deg)';
+                    fly.style.opacity = '0';
+                }, 20);
+                setTimeout(() => fly.remove(), 450);
+            }
+
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const totalItems = cart.reduce((acc, curr) => acc + curr.qty, 0);
+            const badge = document.getElementById('cartBadge');
+            if (badge) {
+                badge.innerText = totalItems;
+                badge.classList.toggle('show', totalItems > 0);
+            }
+
+            const listContainer = document.getElementById('cartItemsList');
+            if (listContainer) {
+                listContainer.innerHTML = cart.map((item, idx) => `
+                    <div class="cart-item-card">
+                        <div class="cart-item-left">
+                            <img src="./images/${item.category}.jpg" class="cart-item-img" onerror="this.src='https://placehold.co/100x100/be123c/ffffff?text=H'">
+                            <div class="cart-item-info">
+                                <span class="cart-item-name">${item.name} (x${item.qty})</span>
+                                <span class="cart-item-price">${parseFloat(item.price) * item.qty} ج.م</span>
+                            </div>
+                        </div>
+                        <span class="remove-btn" onclick="removeItemFromCart(${idx})">حذف</span>
+                    </div>
+                `).join('');
+            }
+
+            const foodTotal = cart.reduce((acc, curr) => acc + (parseFloat(curr.price) * curr.qty), 0);
+            const totalEl = document.getElementById('foodTotalAmount');
+            if (totalEl) totalEl.innerText = `${foodTotal} ج.م`;
+        }
+
+        function removeItemFromCart(idx) {
+            if (cart[idx].qty > 1) { cart[idx].qty -= 1; } else { cart.splice(idx, 1); }
+            updateCartUI();
+            if (cart.length === 0) toggleCart(false);
+        }
+
+        function toggleCart(show) {
+            const modal = document.getElementById('cartModal');
+            if (!modal) return;
+            
+            if (show) {
+                if (cart.length === 0) return alert("السلة فارغة حالياً! أضف بعض المنتجات أولاً.");
+                modal.style.display = 'flex';
+                history.pushState({ cartOpen: true }, "");
+            } else {
+                modal.style.display = 'none';
+                if (history.state && history.state.cartOpen) {
+                    history.back();
+                }
+            }
+        }
+
+        window.addEventListener('popstate', (event) => {
+            const modal = document.getElementById('cartModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        function sendToWA() {
+            const name = document.getElementById('uName').value.trim();
+            const phone = document.getElementById('uPhone').value.trim();
+            const addr = document.getElementById('uAddr').value.trim();
+
+            if (cart.length === 0) return alert("سلتك فارغة!");
+            if (!name || !phone || !addr) return alert("من فضلك أدخل البيانات الأساسية لتسليم الطلب بدقة.");
+
+            let msg = `✨ طلب جديد - منيو Hayah Kitchen الفاخر ✨\n\n`;
+            msg += `👤 الاسم: ${name}\n`;
+            msg += `📱 الموبايل: ${phone}\n`;
+            msg += `🏠 العنوان: ${addr}\n\n`;
+            msg += `📋 المنتجات المطلوبة:\n`;
+
+            msg += cart.map(i => `- ${i.name} (العدد: ${i.qty}) -> ${parseFloat(i.price) * i.qty} ج.م`).join('\n');
+
+            const foodTotal = cart.reduce((acc, curr) => acc + (parseFloat(curr.price) * curr.qty), 0);
+            msg += `\n\n💰 الإجمالي الكلي للفاتورة: ${foodTotal} ج.م\n`;
+            msg += `___\n❤️ أكل بيتي معمول بحب وطعم ملوكي مميز من Hayah Kitchen!`;
+
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`);
+        }
+    </script>
+</body>
+</html>

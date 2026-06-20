@@ -1,0 +1,24 @@
+{
+  "name": "Hayah Kitchen Premium Menu",
+  "short_name": "Hayah Kitchen",
+  "description": "منيو Hayah Kitchen الفاخر - أكل بيتي معمول بحب",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#070708",
+  "theme_color": "#be123c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./images/logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./images/logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}
