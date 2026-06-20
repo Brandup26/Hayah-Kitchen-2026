@@ -1,7 +1,8 @@
-const CACHE_NAME = 'hayah-kitchen-v1';
+const CACHE_NAME = 'hayah-kitchen-v2';
 const ASSETS_TO_CACHE = [
-  'index.html',
-  'manifest.json',
+  './',
+  './index.html',
+  './manifest.json',
   './images/lolog.jpg',
   'https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css'
