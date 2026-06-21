@@ -693,7 +693,6 @@
     <script>
         // نظام تفجير الكاش الديناميكي المربوط بالوقت الحالي لمنع تخزين المتصفح نهائياً وبدون مسح البيانات يدويًا
         const CACHE_BUST = Date.now();
-        const MENU_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT6wLpP2WK8y5xxWWs0r-q-aLw60OIfXtm3bsyyFFsU_SK__bAxvNozcSbENez0Iw/pub?output=csv&t=' + CACHE_BUST;
         const WHATSAPP_NUMBER = "201211770672"; 
         
         let menuData = [];
@@ -726,7 +725,11 @@
 
         async function fetchMenuData() {
             try {
-                const response = await fetch(MENU_CSV_URL, { cache: "no-store" });
+                // توليد توقيت ملي ثانية فوري في كل عملية طلب لمنع كاش الهوست والسيرفر تماماً
+                const dynamicBust = Date.now();
+                const freshUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT6wLpP2WK8y5xxWWs0r-q-aLw60OIfXtm3bsyyFFsU_SK__bAxvNozcSbENez0Iw/pub?output=csv&t=' + dynamicBust;
+
+                const response = await fetch(freshUrl, { cache: "no-store" });
                 const buffer = await response.arrayBuffer();
                 const decoder = new TextDecoder('utf-8'); 
                 const csvText = decoder.decode(buffer);
