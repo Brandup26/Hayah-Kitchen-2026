@@ -63,7 +63,7 @@
             overflow-x: hidden;
             min-height: 100vh;
             line-height: 1.5;
-            padding-top: 235px; 
+            padding-top: 255px; /* زيادة بسيطة لتناسب السطر الجديد للـ Chef */
         }
 
         /* حماية العناصر من الظهور العشوائي قبل انتهاء التحميل */
@@ -130,10 +130,20 @@
             font-size: 1.2rem;
             font-weight: 600;
             color: var(--premium-red);
-            margin-bottom: 40px;
+            margin-bottom: 5px;
             opacity: 0;
             transform: translateY(20px);
             animation: premiumFadeUp 0.5s ease forwards 0.4s;
+        }
+
+        .splash-chef-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #94a3b8;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: premiumFadeUp 0.5s ease forwards 0.45s;
         }
 
         .premium-bar-track {
@@ -238,6 +248,14 @@
             color: var(--premium-red);
             font-weight: 700;
             margin-top: 2px;
+        }
+
+        .hero-chef-title {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 800;
+            margin-top: 1px;
+            letter-spacing: 0.5px;
         }
 
         .theme-toggle-btn, .cart-trigger {
@@ -442,11 +460,20 @@
         }
         .footer-restaurant-phone:active { transform: scale(0.96); }
 
+        .footer-social-title {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            margin-top: 10px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
         .footer-social-links {
             display: flex;
             justify-content: center;
             gap: 16px;
-            margin: 6px 0;
+            margin: 2px 0 6px 0;
         }
 
         .social-icon-btn {
@@ -467,6 +494,7 @@
         
         .social-icon-btn.wa-color { background-color: #25D366; }
         .social-icon-btn.ig-color { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+        .social-icon-btn.fb-color { background-color: #1877F2; }
 
         .footer-rights { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
         
@@ -554,6 +582,7 @@
             </div>
             <h2 class="splash-title">Hayah Kitchen</h2>
             <p class="splash-slogan">أكل بيتي معمول بحب ❤️</p>
+            <p class="splash-chef-title">Chef / SALAH</p>
             
             <div class="premium-bar-track">
                 <span class="premium-bar-fill" id="splash-bar"></span>
@@ -570,6 +599,7 @@
                 <img src="./images/lolog.jpg" class="hero-logo" alt="لوجو Hayah Kitchen" onerror="this.src='https://placehold.co/150x150/be123c/ffffff?text=Hayah'">
                 <h1 class="hero-title">Hayah Kitchen</h1>
                 <p class="hero-slogan">أكل بيتي معمول بحب ❤️</p>
+                <p class="hero-chef-title">Chef / SALAH</p>
             </div>
 
             <div class="cart-trigger" onclick="toggleCart(true)" id="cartBtn">
@@ -589,9 +619,13 @@
                 <i class="fa-solid fa-phone-volume"></i> رقم المطعم: 01211770672
             </a>
             
+            <div class="footer-social-title">Social Media</div>
             <div class="footer-social-links">
                 <a href="https://wa.me/201211770672" target="_blank" class="social-icon-btn wa-color" title="واتساب المطعم">
                     <i class="fa-brands fa-whatsapp"></i>
+                </a>
+                <a href="https://www.facebook.com/share/193da68xgc/" target="_blank" class="social-icon-btn fb-color" title="فيسبوك المطعم">
+                    <i class="fa-brands fa-facebook"></i>
                 </a>
                 <a href="https://www.instagram.com/hayahkitchen?igsh=MXFwd2xoNnEycjgzeA==" target="_blank" class="social-icon-btn ig-color" title="إنستجرام المطعم">
                     <i class="fa-brands fa-instagram"></i>
@@ -634,6 +668,16 @@
         
         let menuData = [];
         let cart = [];
+
+        // دالة مضافة لاستخراج الاسم الانجليزي من داخل الأقواس لمطابقة الصورة في جيت هاب
+        function cleanItemForImage(itemName) {
+            if (!itemName) return 'lolog';
+            let matchInsideParentheses = itemName.match(/\(([^)]+)\)/);
+            if (matchInsideParentheses) {
+                return matchInsideParentheses[1].trim();
+            }
+            return itemName.trim();
+        }
 
         function toggleMainTheme() {
             document.body.classList.toggle('dark-mode');
@@ -735,10 +779,12 @@
             menuListContainer.innerHTML = menuData.map((item, globalIdx) => {
                 if (item.category !== category) return '';
 
+                let finalImageName = cleanItemForImage(item.name);
+
                 return `
                     <div class="premium-stack-card">
                         <div class="card-banner-wrapper">
-                            <img src="./images/${item.category}.jpg" onerror="this.src='https://placehold.co/500x220/be123c/ffffff?text=${encodeURIComponent(item.name)}'">
+                            <img src="./images/${finalImageName}.jpg" onerror="this.src='https://placehold.co/500x220/be123c/ffffff?text=${encodeURIComponent(item.name)}'">
                         </div>
                         <div class="card-body-content">
                             <div class="card-header-row">
@@ -806,18 +852,21 @@
 
             const listContainer = document.getElementById('cartItemsList');
             if (listContainer) {
-                listContainer.innerHTML = cart.map((item, idx) => `
-                    <div class="cart-item-card">
-                        <div class="cart-item-left">
-                            <img src="./images/${item.category}.jpg" class="cart-item-img" onerror="this.src='https://placehold.co/100x100/be123c/ffffff?text=H'">
-                            <div class="cart-item-info">
-                                <span class="cart-item-name">${item.name} (x${item.qty})</span>
-                                <span class="cart-item-price">${parseFloat(item.price) * item.qty} ج.م</span>
+                listContainer.innerHTML = cart.map((item, idx) => {
+                    let cartImageName = cleanItemForImage(item.name);
+                    return `
+                        <div class="cart-item-card">
+                            <div class="cart-item-left">
+                                <img src="./images/${cartImageName}.jpg" class="cart-item-img" onerror="this.src='https://placehold.co/100x100/be123c/ffffff?text=H'">
+                                <div class="cart-item-info">
+                                    <span class="cart-item-name">${item.name} (x${item.qty})</span>
+                                    <span class="cart-item-price">${parseFloat(item.price) * item.qty} ج.م</span>
+                                </div>
                             </div>
+                            <span class="remove-btn" onclick="removeItemFromCart(${idx})">حذف</span>
                         </div>
-                        <span class="remove-btn" onclick="removeItemFromCart(${idx})">حذف</span>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
 
             const foodTotal = cart.reduce((acc, curr) => acc + (parseFloat(curr.price) * curr.qty), 0);
