@@ -990,10 +990,15 @@
             window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`);
         }
 
+        // الخطوة السحرية: تحديث تشغيل السيرفيس وركر لطلب البيانات من السيرفر أولاً بدلاً من الكاش الميت
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register(`sw.js?v=${CACHE_BUST}`)
-                    .then(reg => console.log('Hayah Kitchen App Registered Successfully!', reg))
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => {
+                        console.log('Hayah Kitchen PWA Ready!');
+                        // إجبار التطبيق على فحص التحديثات في الخلفية فوراً عند كل زيارة
+                        reg.update();
+                    })
                     .catch(err => console.log('App Registration Failed:', err));
             });
         }

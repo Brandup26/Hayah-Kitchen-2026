@@ -1,4 +1,5 @@
-const CACHE_NAME = 'hayah-kitchen-v3';
+const CACHE_NAME = 'hayah-kitchen-v5'; // تغيير اسم الكاش لإجبار الموبايل على التحديث فوراً
+
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -28,22 +29,25 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// استراتيجية جلب ديناميكية: دائمًا جلب الجديد من السيرفر وشيت جوجل أولاً، وحفظ نسخة احتياطية للطوارئ
 self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET' || !event.request.url.startsWith(self.location.origin)) {
-    return;
-  }
+  if (event.request.method !== 'GET') return;
+
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      const fetchedResponse = fetch(event.request).then((networkResponse) => {
-        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+    fetch(event.request)
+      .then((networkResponse) => {
+        // إذا كان الملف سليم، نحدث الكاش بالنسخة الجديدة فوراً
+        if (networkResponse && networkResponse.status === 200) {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache);
           });
         }
         return networkResponse;
-      }).catch(() => {});
-      return cachedResponse || fetchedResponse;
-    })
+      })
+      .catch(() => {
+        // في حالة قطع الإنترنت تماماً عند العميل، يتم سحب الصور من الكاش تلقائياً
+        return caches.match(event.request);
+      })
   );
 });
