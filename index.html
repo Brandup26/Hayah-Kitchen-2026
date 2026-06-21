@@ -691,14 +691,12 @@
     </div>
 
     <script>
-        // نظام تفجير الكاش الديناميكي المربوط بالوقت الحالي لمنع تخزين المتصفح نهائياً وبدون مسح البيانات يدويًا
         const CACHE_BUST = Date.now();
         const WHATSAPP_NUMBER = "201211770672"; 
         
         let menuData = [];
         let cart = [];
 
-        // تطبيق الـ Cache Busting على صور هيدر ولوجو الأبلكيشن الثابتة فوراً
         document.getElementById('splashLogoImg').src = `./images/lolog.jpg?v=${CACHE_BUST}`;
         document.getElementById('headerLogoImg').src = `./images/lolog.jpg?v=${CACHE_BUST}`;
         document.getElementById('splashLogoImg').onerror = function() { this.src = 'https://placehold.co/300x300/e11d24/ffffff?text=Hayah'; };
@@ -725,7 +723,6 @@
 
         async function fetchMenuData() {
             try {
-                // التعديل السحري: ربط كود الأندكس برابط جوجل شيت الفريش الجديد مع حماية الكاش بستنج الديناميكي
                 const dynamicBust = Date.now();
                 const freshUrl = 'https://docs.google.com/spreadsheets/d/1wZf28FskQ9088MCHoJ-5uEwE98TfHbe4y9M6Cexu2O0/gviz/tq?tqx=out:csv&sheet=Sheet1&t=' + dynamicBust;
 
@@ -755,14 +752,12 @@
             }
         }
 
-        // نظام الانتظار المطور: لا يتم الخروج من لودر التحميل إلا بعد اكتمال تحميل 100% من كافة صور المنيو
         function startStrictImagesPreload() {
             if (menuData.length === 0) {
                 hideSplashScreen();
                 return;
             }
 
-            // تجميع روابط كافة صور الأكلات بدقة مع كاش بستنج تفجيري ديناميكي يكسر ذاكرة المتصفح
             const imagePaths = menuData.map(item => {
                 let finalImageName = cleanItemForImage(item.name);
                 return `./images/${finalImageName}.jpg?v=${CACHE_BUST}`;
@@ -790,11 +785,10 @@
                 }
             }
 
-            // إجبار المتصفح على بدء تحميل شبكة الصور بالكامل الآن خلف الكواليس
             imagePaths.forEach(path => {
                 const img = new Image();
                 img.onload = updateProgress;
-                img.onerror = updateProgress; // نضمن العد والعبور حتى لو الصورة مفقودة على السيرفر
+                img.onerror = updateProgress; 
                 img.src = path;
             });
         }
@@ -824,7 +818,6 @@
 
             const menuListContainer = document.getElementById('menuList');
             
-            // فلترة وتحديد عداد الترتيب الداخلي للوجبات في أول قسم لتحديد الوجبة 2 و3 و5 والأخيرة لضبط كادرها
             let currentCategoryItems = menuData.filter(item => item.category === category);
             let totalInThisCat = currentCategoryItems.length;
             let currentItemIndexInCat = 0;
@@ -832,19 +825,17 @@
             menuListContainer.innerHTML = menuData.map((item, globalIdx) => {
                 if (item.category !== category) return '';
 
-                currentItemIndexInCat++; // ترتيب الوجبة الحالية داخل هذا القسم
+                currentItemIndexInCat++; 
                 let finalImageName = cleanItemForImage(item.name);
                 
-                // هندسة وفلترة أسماء الفئات المطلوبة لموازنة بُعد الكادر بدقة متناهية
                 let scaleClass = "";
                 
-                // فحص وتطبيق القواعد على القسم الأول فقط بناءً على طلبك هندسة أنس
                 const uniqueCategories = [...new Set(menuData.map(i => i.category))];
                 if (category === uniqueCategories[0]) {
                     if (currentItemIndexInCat === 2 || currentItemIndexInCat === 3 || currentItemIndexInCat === totalInThisCat) {
-                        scaleClass = "scale-up-image"; // تقريب الوجبة الثانية والثالثة والأخيرة لتوحيد المسافة
+                        scaleClass = "scale-up-image"; 
                     } else if (currentItemIndexInCat === 5) {
-                        scaleClass = "scale-down-image"; // تبيعد الوجبة الخامسة للوراء لتتناسب بصرياً مع البقية
+                        scaleClass = "scale-down-image"; 
                     }
                 }
 
@@ -993,11 +984,10 @@
             window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`);
         }
 
-        // 🌟 حركة تدمير وإيقاف كاش الـ Service Worker القديم نهائياً لمنع تعليق الكود عند الزبائن
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(function(registrations) {
                 for(let registration of registrations) {
-                    registration.unregister(); // مسح كامل لأي كاش معلق أو قديم مخزن في الخلفية فوراً
+                    registration.unregister(); 
                 }
             });
         }
