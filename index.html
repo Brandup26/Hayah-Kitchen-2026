@@ -692,7 +692,8 @@
 
     <script>
         const CACHE_BUST = Date.now();
-        const MENU_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT6wLpP2WK8y5xxWWs0r-q-aLw60OIfXtm3bsyyFFsU_SK__bAxvNozcSbENez0Iw/pub?output=csv&t=' + CACHE_BUST;
+        // تم تحديث الرابط هنا
+        const MENU_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQrC1hw6FzXbBcHD9MjbJ2Gtnq2xaRBG9tnlowxZxWwkNiqfUi20OjQvpfNGZAO-nu5TR2u9x3sngSG/pub?output=csv&t=' + CACHE_BUST;
         const WHATSAPP_NUMBER = "201211770672"; 
         
         let menuData = [];
@@ -767,7 +768,6 @@
             const counterNum = document.getElementById("splash-counter-num");
             const barFill = document.getElementById("splash-bar");
 
-            // تعديل: دالة تحديث الشريط ليأخذ 3 ثواني
             let progress = 0;
             let interval = setInterval(() => {
                 progress += 1;
@@ -777,12 +777,11 @@
                 }
                 if (counterNum) counterNum.innerText = progress;
                 if (barFill) barFill.style.width = progress + "%";
-            }, 30); // 30ms * 100 = 3000ms = 3 ثواني
+            }, 30); 
 
             function updateProgress() {
                 loadedCount++;
                 if (loadedCount >= totalImages) {
-                    // ننتظر انتهاء مؤقت الـ 3 ثواني قبل الإخفاء
                     setTimeout(() => {
                         hideSplashScreen();
                         const uniqueCategories = [...new Set(menuData.map(item => item.category))];
