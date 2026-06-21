@@ -1,0 +1,32 @@
+{
+  "name": "منيو Hayah Kitchen الفاخر",
+  "short_name": "Hayah Kitchen",
+  "description": "أكل بيتي معمول بحب وطعم ملوكي مميز",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#070708",
+  "theme_color": "#e11d24",
+  "orientation": "portrait",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    {
+      "src": "./images/lolog.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "./images/lolog.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "./images/lolog.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "maskable"
+    }
+  ]
+}
