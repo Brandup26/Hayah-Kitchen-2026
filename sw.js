@@ -1,75 +1,49 @@
-const CACHE_NAME = 'hayah-kitchen-v6';
-
-// العناصر الأساسية المطلوب تخزينها ليعمل التطبيق بدون إنترنت (Offline)
+const CACHE_NAME = 'hayah-kitchen-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
-  './images/lolog.jpg',
-  'https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css'
+  './images/lolog.jpg'
 ];
 
-// مرحلة التثبيت: تخزين الملفات الأساسية في الكاش
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('[Service Worker] Caching core app assets');
-        return cache.addAll(ASSETS_TO_CACHE);
-      })
-      .then(() => self.skipWaiting()) // تفعيل السيرفس وركر الجديد فوراً
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS_TO_CACHE);
+    }).then(() => self.skipWaiting())
   );
 });
 
-// مرحلة التنشيط: حذف أي كاش قديم (v5 وما قبله) لضمان ظهور تعديلات الأبعاد الجديدة للصور
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cache) => {
           if (cache !== CACHE_NAME) {
-            console.log('[Service Worker] Deleting old cache:', cache);
             return caches.delete(cache);
           }
         })
       );
-    }).then(() => self.clients.claim()) // السيطرة على كل الصفحات المفتوحة فوراً
+    }).then(() => self.clients.claim())
   );
 });
 
-// مرحلة جلب البيانات: جلب الملفات من الكاش، وإذا لم تكن موجودة يتم جلبها من شبكة الإنترنت
 self.addEventListener('fetch', (event) => {
-  // استثناء رابط الـ CSV الخاص بـ Google Sheets لكي يقرأ الأسعار والوجبات الجديدة دائماً من الإنترنت مباشر
-  if (event.request.url.includes('docs.google.com/spreadsheets')) {
-    return fetch(event.request);
+  if (event.request.method !== 'GET' || !event.request.url.startsWith(self.location.origin)) {
+    return;
   }
-
   event.respondWith(
-    caches.match(event.request)
-      .then((cachedResponse) => {
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-
-        // إذا كان الملف غير مخزن (مثل صور الوجبات الجديدة)، يتم جلبها وحفظها في الكاش ديناميكياً
-        return fetch(event.request).then((networkResponse) => {
-          if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-            return networkResponse;
-          }
-
+    caches.match(event.request).then((cachedResponse) => {
+      const fetchedResponse = fetch(event.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache);
           });
-
-          return networkResponse;
-        });
-      }).catch(() => {
-        // إذا كان المستخدم أوفلاين تماماً والملف غير موجود بالكاش
-        if (event.request.mode === 'navigate') {
-          return caches.match('./index.html');
         }
-      })
+        return networkResponse;
+      }).catch(() => {});
+      return cachedResponse || fetchedResponse;
+    })
   );
 });

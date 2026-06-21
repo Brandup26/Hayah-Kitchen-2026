@@ -1,24 +1,24 @@
 {
-  "name": "Hayah Kitchen Premium Menu",
   "short_name": "Hayah Kitchen",
-  "description": "منيو Hayah Kitchen الفاخر - أكل بيتي معمول بحب",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#070708",
-  "theme_color": "#be123c",
-  "orientation": "portrait-primary",
+  "name": "منيو Hayah Kitchen الفاخر",
+  "description": "أكل بيتي معمول بحب وطعم ملوكي مميز",
   "icons": [
     {
-      "src": "images/lolog.jpg",
+      "src": "./images/lolog.jpg",
       "sizes": "192x192",
       "type": "image/jpeg",
-      "purpose": "any"
+      "purpose": "maskable"
     },
     {
-      "src": "images/lolog.jpg",
+      "src": "./images/lolog.jpg",
       "sizes": "512x512",
       "type": "image/jpeg",
-      "purpose": "any"
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "start_url": "./index.html?utm_source=pwa",
+  "background_color": "#070708",
+  "theme_color": "#e11d24",
+  "display": "standalone",
+  "orientation": "portrait"
 }
