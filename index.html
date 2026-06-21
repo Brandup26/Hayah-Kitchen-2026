@@ -63,7 +63,7 @@
             overflow-x: hidden;
             min-height: 100vh;
             line-height: 1.5;
-            padding-top: 255px; /* زيادة بسيطة لتناسب السطر الجديد للـ Chef */
+            padding-top: 255px; 
         }
 
         /* حماية العناصر من الظهور العشوائي قبل انتهاء التحميل */
@@ -328,7 +328,7 @@
         }
 
         /* ----------------------------------------------------
-           كروت المنتجات
+           تعديل كروت المنتجات لتصغير الصور وإظهارها كاملة
          ------------------------------------------------------- */
         .grid-menu-container {
             display: grid;
@@ -349,14 +349,24 @@
             box-shadow: 0 8px 24px rgba(0,0,0,0.02);
         }
 
+        /* حاوية الصورة: تم إضافة حشوة وبادينج ناعم لإعطاء الصورة مساحة ممتازة */
         .card-banner-wrapper {
             width: 100%;
-            height: 140px;
-            background: var(--box-bg);
+            height: 160px; /* زيادة الارتفاع الكلي للحاوية قليلاً لاستيعاب الصورة */
+            background: var(--card-dark); /* جعل خلفية الحاوية بيضاء متناسقة مع الكارت */
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 12px; /* مسافة أمان من الأعلى */
         }
+        
+        /* الصورة: تم تصغير حجمها إلى 88% لتظهر كاملة تماماً واستخدام contain لمنع أي قص نهائياً */
         .card-banner-wrapper img {
-            width: 100%; height: 100%; object-fit: cover;
+            width: 88%; 
+            height: 88%; 
+            object-fit: contain; /* يضمن ظهور البيتزا والوجبات كاملة ومستديرة بدون قص */
+            border-radius: 12px; /* انحناء خفيف ناعم لأطراف الصور */
         }
 
         .card-body-content {
@@ -423,7 +433,7 @@
         }
 
         /* ----------------------------------------------------
-           تصميم الفوتر بالأيقونات والبيانات الرسمية الجديدة
+           تصميم الفوتر بالأيقونات والبيانات الرسمية
         ------------------------------------------------------- */
         .restaurant-footer {
             display: flex;
@@ -669,7 +679,6 @@
         let menuData = [];
         let cart = [];
 
-        // دالة مضافة لاستخراج الاسم الانجليزي من داخل الأقواس لمطابقة الصورة في جيت هاب
         function cleanItemForImage(itemName) {
             if (!itemName) return 'lolog';
             let matchInsideParentheses = itemName.match(/\(([^)]+)\)/);
@@ -926,7 +935,6 @@
             window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`);
         }
 
-        // تسجيل الـ Service Worker لتسريع المنيو وتحويله لتطبيق
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')

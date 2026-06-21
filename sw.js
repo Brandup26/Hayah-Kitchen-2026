@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hayah-kitchen-v5';
+const CACHE_NAME = 'hayah-kitchen-v6';
 
 // العناصر الأساسية المطلوب تخزينها ليعمل التطبيق بدون إنترنت (Offline)
 const ASSETS_TO_CACHE = [
@@ -22,7 +22,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// مرحلة التنشيط: حذف الكاش القديم (v1, v2, v3, v4) لضمان ظهور التعديلات الجديدة
+// مرحلة التنشيط: حذف أي كاش قديم (v5 وما قبله) لضمان ظهور تعديلات الأبعاد الجديدة للصور
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
