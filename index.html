@@ -349,22 +349,22 @@
             box-shadow: 0 8px 24px rgba(0,0,0,0.02);
         }
 
-        /* حاوية الصورة: تم إضافة حشوة وبادينج ناعم لإعطاء الصورة مساحة ممتازة */
+        /* حاوية الصورة: تم تعديل الارتفاع والمساحات لتكبير العرض الإجمالي للوجبة */
         .card-banner-wrapper {
             width: 100%;
-            height: 160px; /* زيادة الارتفاع الكلي للحاوية قليلاً لاستيعاب الصورة */
+            height: 200px; /* زيادة الارتفاع ليعطي الوجبات مساحة ظهور أكبر وشكل أشيك */
             background: var(--card-dark); /* جعل خلفية الحاوية بيضاء متناسقة مع الكارت */
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding-top: 12px; /* مسافة أمان من الأعلى */
+            padding: 8px; /* تقليل الهوامش الداخلية قليلًا لتكبير حجم الصورة */
         }
         
-        /* الصورة: تم تصغير حجمها إلى 88% لتظهر كاملة تماماً واستخدام contain لمنع أي قص نهائياً */
+        /* الصورة: تم تكبير حجم العرض والارتفاع لملء المساحة وتظهر الوجبة ممتازة وكبيرة */
         .card-banner-wrapper img {
-            width: 88%; 
-            height: 88%; 
+            width: 96%; 
+            height: 96%; 
             object-fit: contain; /* يضمن ظهور البيتزا والوجبات كاملة ومستديرة بدون قص */
             border-radius: 12px; /* انحناء خفيف ناعم لأطراف الصور */
         }
@@ -591,8 +591,8 @@
                 <img src="./images/lolog.jpg" class="splash-logo" alt="لوجو Hayah Kitchen" onerror="this.src='https://placehold.co/300x300/be123c/ffffff?text=Hayah'">
             </div>
             <h2 class="splash-title">Hayah Kitchen</h2>
-            <p class="splash-slogan">أكل بيتي معمول بحب ❤️</p>
             <p class="splash-chef-title">Chef / SALAH</p>
+            <p class="splash-slogan">أكل بيتي معمول بحب ❤️</p>
             
             <div class="premium-bar-track">
                 <span class="premium-bar-fill" id="splash-bar"></span>
@@ -608,8 +608,8 @@
             <div class="identity-center-box">
                 <img src="./images/lolog.jpg" class="hero-logo" alt="لوجو Hayah Kitchen" onerror="this.src='https://placehold.co/150x150/be123c/ffffff?text=Hayah'">
                 <h1 class="hero-title">Hayah Kitchen</h1>
-                <p class="hero-slogan">أكل بيتي معمول بحب ❤️</p>
                 <p class="hero-chef-title">Chef / SALAH</p>
+                <p class="hero-slogan">أكل بيتي معمول بحب ❤️</p>
             </div>
 
             <div class="cart-trigger" onclick="toggleCart(true)" id="cartBtn">
@@ -673,7 +673,9 @@
     </div>
 
     <script>
-        const MENU_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT6wLpP2WK8y5xxWWs0r-q-aLw60OIfXtm3bsyyFFsU_SK__bAxvNozcSbENez0Iw/pub?output=csv';
+        // تم إضافة متغير فريد للوقت الحالي تمنع كاش المتصفح نهائيًا لتظهر التعديلات فورا
+        const CACHE_BUST = Date.now();
+        const MENU_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT6wLpP2WK8y5xxWWs0r-q-aLw60OIfXtm3bsyyFFsU_SK__bAxvNozcSbENez0Iw/pub?output=csv&t=' + CACHE_BUST;
         const WHATSAPP_NUMBER = "201211770672"; 
         
         let menuData = [];
@@ -700,7 +702,7 @@
 
         async function fetchMenuData() {
             try {
-                const response = await fetch(MENU_CSV_URL);
+                const response = await fetch(MENU_CSV_URL, { cache: "no-store" });
                 const buffer = await response.arrayBuffer();
                 const decoder = new TextDecoder('utf-8'); 
                 const csvText = decoder.decode(buffer);
@@ -735,7 +737,7 @@
             const uniqueCategories = [...new Set(menuData.map(item => item.category))];
             uniqueCategories.forEach(cat => {
                 const img = new Image();
-                img.src = `./images/${cat}.jpg`; 
+                img.src = `./images/${cat}.jpg?v=${CACHE_BUST}`; 
             });
 
             const counterNum = document.getElementById("splash-counter-num");
@@ -793,7 +795,7 @@
                 return `
                     <div class="premium-stack-card">
                         <div class="card-banner-wrapper">
-                            <img src="./images/${finalImageName}.jpg" onerror="this.src='https://placehold.co/500x220/be123c/ffffff?text=${encodeURIComponent(item.name)}'">
+                            <img src="./images/${finalImageName}.jpg?v=${CACHE_BUST}" onerror="this.src='https://placehold.co/500x220/be123c/ffffff?text=${encodeURIComponent(item.name)}'">
                         </div>
                         <div class="card-body-content">
                             <div class="card-header-row">
@@ -866,7 +868,7 @@
                     return `
                         <div class="cart-item-card">
                             <div class="cart-item-left">
-                                <img src="./images/${cartImageName}.jpg" class="cart-item-img" onerror="this.src='https://placehold.co/100x100/be123c/ffffff?text=H'">
+                                <img src="./images/${cartImageName}.jpg?v=${CACHE_BUST}" class="cart-item-img" onerror="this.src='https://placehold.co/100x100/be123c/ffffff?text=H'">
                                 <div class="cart-item-info">
                                     <span class="cart-item-name">${item.name} (x${item.qty})</span>
                                     <span class="cart-item-price">${parseFloat(item.price) * item.qty} ج.م</span>
