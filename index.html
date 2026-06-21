@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <title>منيو Hayah Kitchen الفاخر</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -20,7 +24,7 @@
     <style>
         /* الهوية البصرية - الوضع المضيء */
         :root {
-            --premium-red: #e11d24;       /* تم تحديث درجة اللون الأحمر بناءً على الصورة المرسلة بدقة */
+            --premium-red: #e11d24;       
             --premium-red-dark: #a91217;  
             --premium-green: #10b981;     
             
@@ -165,7 +169,7 @@
             background: linear-gradient(90deg, var(--premium-red-dark), var(--premium-red));
             border-radius: 20px;
             box-shadow: 0 0 10px var(--premium-red);
-            transition: width 0.035s linear; 
+            transition: width 0.1s linear; 
         }
 
         .premium-counter-text {
@@ -275,7 +279,6 @@
             position: relative;
         }
         
-        /* تأثير اهتزاز السلة الفخم بدون أي تلوين أخضر للسلة العلوية */
         .cart-trigger.cart-shake-active {
             animation: cartShakeAnim 0.4s ease-in-out;
         }
@@ -333,7 +336,7 @@
         }
 
         /* ----------------------------------------------------
-           تعديل كروت المنتجات لتوحيد الكادر وإلغاء الأوف وايت والحواف السوداء
+           كروت المنتجات وتعديل كادر الصور المطلوب بدقة لضبط التفاوت
          ------------------------------------------------------- */
         .grid-menu-container {
             display: grid;
@@ -354,7 +357,6 @@
             box-shadow: 0 8px 24px rgba(0,0,0,0.02);
         }
 
-        /* حاوية الصورة الموحدة تماماً بلون أبيض ناصع وثابت */
         .card-banner-wrapper {
             width: 100%;
             height: 220px; 
@@ -366,12 +368,21 @@
             padding: 0px; 
         }
         
-        /* ضبط الكادر ليكون موحد للجميع وإخفاء أي حواف سوداء أو اختلاف درجات الأبيض */
         .card-banner-wrapper img {
             width: 100%; 
             height: 100%; 
-            object-fit: cover; /* توحيد كادر الأبعاد والمسافة لكل الصور تلقائياً ومنع تفاوت القرب والبعد */
-            mix-blend-mode: multiply; /* دمج أي تفاوت ألوان أو أوف وايت في الصورة ليكون أبيض ناصع مطابق تماماً للخلفية */
+            object-fit: cover; 
+            mix-blend-mode: multiply; 
+            transition: transform 0.2s ease;
+        }
+
+        /* فئات مخصصة تم حقنها برمجياً لضبط وموازنة كادر كل وجبة طلبتها بدقة */
+        .premium-stack-card.scale-up-image .card-banner-wrapper img {
+            transform: scale(1.18) !important; /* تقريب كادر الوجبة الثانية والثالثة والأخيرة لتوحيد المسافة */
+        }
+
+        .premium-stack-card.scale-down-image .card-banner-wrapper img {
+            transform: scale(0.92) !important; /* تبيعد كادر الوجبة الخامسة للوراء ليتناسق مع الجميع */
         }
 
         .card-body-content {
@@ -426,7 +437,6 @@
             transition: background 0.3s ease, box-shadow 0.3s ease;
         }
 
-        /* إرجاع اللون الأخضر وأنيميشن النجاح لزر الإضافة السفلي كما كان سابقاً */
         .stack-action-btn.added-success {
             background: linear-gradient(135deg, var(--premium-green), #047857) !important;
             box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3) !important;
@@ -596,7 +606,7 @@
     <div id="premium-splash">
         <div class="splash-container">
             <div class="splash-logo-wrapper">
-                <img src="./images/lolog.jpg" class="splash-logo" alt="لوجو Hayah Kitchen" onerror="this.src='https://placehold.co/300x300/e11d24/ffffff?text=Hayah'">
+                <img src="./images/lolog.jpg" class="splash-logo" alt="لوجو Hayah Kitchen" id="splashLogoImg">
             </div>
             <h2 class="splash-title">Hayah Kitchen</h2>
             <p class="splash-chef-title">Chef / SALAH</p>
@@ -614,7 +624,7 @@
             <div class="theme-toggle-btn" onclick="toggleMainTheme()" id="themeBtn">☀️</div>
             
             <div class="identity-center-box">
-                <img src="./images/lolog.jpg" class="hero-logo" alt="لوجو Hayah Kitchen" onerror="this.src='https://placehold.co/150x150/e11d24/ffffff?text=Hayah'">
+                <img src="./images/lolog.jpg" class="hero-logo" alt="لوجو Hayah Kitchen" id="headerLogoImg">
                 <h1 class="hero-title">Hayah Kitchen</h1>
                 <p class="hero-chef-title">Chef / SALAH</p>
                 <p class="hero-slogan">أكل بيتي معمول بحب ❤️</p>
@@ -681,12 +691,19 @@
     </div>
 
     <script>
+        // نظام تفجير الكاش الديناميكي المربوط بالوقت الحالي لمنع تخزين المتصفح نهائياً وبدون مسح البيانات يدويًا
         const CACHE_BUST = Date.now();
         const MENU_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT6wLpP2WK8y5xxWWs0r-q-aLw60OIfXtm3bsyyFFsU_SK__bAxvNozcSbENez0Iw/pub?output=csv&t=' + CACHE_BUST;
         const WHATSAPP_NUMBER = "201211770672"; 
         
         let menuData = [];
         let cart = [];
+
+        // تطبيق الـ Cache Busting على صور هيدر ولوجو الأبلكيشن الثابتة فوراً
+        document.getElementById('splashLogoImg').src = `./images/lolog.jpg?v=${CACHE_BUST}`;
+        document.getElementById('headerLogoImg').src = `./images/lolog.jpg?v=${CACHE_BUST}`;
+        document.getElementById('splashLogoImg').onerror = function() { this.src = 'https://placehold.co/300x300/e11d24/ffffff?text=Hayah'; };
+        document.getElementById('headerLogoImg').onerror = function() { this.src = 'https://placehold.co/150x150/e11d24/ffffff?text=Hayah'; };
 
         function cleanItemForImage(itemName) {
             if (!itemName) return 'lolog';
@@ -728,46 +745,55 @@
                     return { category, name, desc, price };
                 }).filter(Boolean);
 
-                startPreloadAndLinearCounter();
+                startStrictImagesPreload();
             } catch (error) {
                 document.getElementById('menuList').innerHTML = '<div style="color:var(--premium-red); text-align:center; padding:20px; font-weight:700;">⚠️ عذراً، تعذر تحميل المنيو حالياً.</div>';
                 hideSplashScreen();
             }
         }
 
-        function startPreloadAndLinearCounter() {
+        // نظام الانتظار المطور: لا يتم الخروج من لودر التحميل إلا بعد اكتمال تحميل 100% من كافة صور المنيو
+        function startStrictImagesPreload() {
             if (menuData.length === 0) {
                 hideSplashScreen();
                 return;
             }
 
-            const uniqueCategories = [...new Set(menuData.map(item => item.category))];
-            uniqueCategories.forEach(cat => {
-                const img = new Image();
-                img.src = `./images/${cat}.jpg?v=${CACHE_BUST}`; 
+            // تجميع روابط كافة صور الأكلات بدقة مع كاش بستنج تفجيري
+            const imagePaths = menuData.map(item => {
+                let finalImageName = cleanItemForImage(item.name);
+                return `./images/${finalImageName}.jpg?v=${CACHE_BUST}`;
             });
 
+            let loadedCount = 0;
+            const totalImages = imagePaths.length;
+            
             const counterNum = document.getElementById("splash-counter-num");
             const barFill = document.getElementById("splash-bar");
-            
-            let currentPercent = 0;
-            const totalDuration = 3500; 
-            const stepTime = totalDuration / 100; 
 
-            const linearInterval = setInterval(() => {
-                currentPercent++;
+            function updateProgress() {
+                loadedCount++;
+                let currentPercent = Math.floor((loadedCount / totalImages) * 100);
                 
                 if (counterNum) counterNum.innerText = currentPercent;
                 if (barFill) barFill.style.width = currentPercent + "%";
 
-                if (currentPercent >= 100) {
-                    clearInterval(linearInterval);
+                if (loadedCount >= totalImages) {
                     setTimeout(() => {
                         hideSplashScreen();
+                        const uniqueCategories = [...new Set(menuData.map(item => item.category))];
                         renderCategoryNavigation(uniqueCategories);
-                    }, 150); 
+                    }, 250); 
                 }
-            }, stepTime);
+            }
+
+            // إجبار المتصفح على بدء تحميل شبكة الصور بالكامل الآن خلف الكواليس
+            imagePaths.forEach(path => {
+                const img = new Image();
+                img.onload = updateProgress;
+                img.onerror = updateProgress; // نضمن العد والعبور حتى لو الصورة مفقودة على السيرفر
+                img.src = path;
+            });
         }
 
         function hideSplashScreen() {
@@ -794,13 +820,33 @@
             }
 
             const menuListContainer = document.getElementById('menuList');
+            
+            // فلترة وتحديد عداد الترتيب الداخلي للوجبات في أول قسم لتحديد الوجبة 2 و3 و5 والأخيرة لضبط كادرها
+            let currentCategoryItems = menuData.filter(item => item.category === category);
+            let totalInThisCat = currentCategoryItems.length;
+            let currentItemIndexInCat = 0;
+
             menuListContainer.innerHTML = menuData.map((item, globalIdx) => {
                 if (item.category !== category) return '';
 
+                currentItemIndexInCat++; // ترتيب الوجبة الحالية داخل هذا القسم
                 let finalImageName = cleanItemForImage(item.name);
+                
+                // هندسة وفلترة أسماء الفئات المطلوبة لموازنة بُعد الكادر بدقة متناهية
+                let scaleClass = "";
+                
+                // فحص وتطبيق القواعد على القسم الأول فقط بناءً على طلبك هندسة أنس
+                const uniqueCategories = [...new Set(menuData.map(i => i.category))];
+                if (category === uniqueCategories[0]) {
+                    if (currentItemIndexInCat === 2 || currentItemIndexInCat === 3 || currentItemIndexInCat === totalInThisCat) {
+                        scaleClass = "scale-up-image"; // تقريب الوجبة الثانية والثالثة والأخيرة لتوحيد المسافة
+                    } else if (currentItemIndexInCat === 5) {
+                        scaleClass = "scale-down-image"; // تبيعد الوجبة الخامسة للوراء لتتناسب بصرياً مع البقية
+                    }
+                }
 
                 return `
-                    <div class="premium-stack-card">
+                    <div class="premium-stack-card ${scaleClass}">
                         <div class="card-banner-wrapper">
                             <img src="./images/${finalImageName}.jpg?v=${CACHE_BUST}" onerror="this.src='https://placehold.co/500x220/e11d24/ffffff?text=${encodeURIComponent(item.name)}'">
                         </div>
@@ -839,7 +885,6 @@
 
             const cartBtn = document.getElementById('cartBtn');
             if (cartBtn) {
-                // أنيميشن الاهتزاز الفخم فقط بدون تلوين السلة بالأخضر
                 cartBtn.classList.add('cart-shake-active');
                 setTimeout(() => cartBtn.classList.remove('cart-shake-active'), 400);
 
@@ -947,7 +992,7 @@
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
+                navigator.serviceWorker.register(`sw.js?v=${CACHE_BUST}`)
                     .then(reg => console.log('Hayah Kitchen App Registered Successfully!', reg))
                     .catch(err => console.log('App Registration Failed:', err));
             });
