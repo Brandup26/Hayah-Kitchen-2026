@@ -378,11 +378,11 @@
 
         /* فئات مخصصة تم حقنها برمجياً لضبط وموازنة كادر كل وجبة طلبتها بدقة */
         .premium-stack-card.scale-up-image .card-banner-wrapper img {
-            transform: scale(1.18) !important; 
+            transform: scale(1.18) !important; /* تقريب كادر الوجبة الثانية والثالثة والأخيرة لتوحيد المسافة */
         }
 
         .premium-stack-card.scale-down-image .card-banner-wrapper img {
-            transform: scale(0.92) !important; 
+            transform: scale(0.92) !important; /* تبيعد كادر الوجبة الخامسة للوراء ليتناسق مع الجميع */
         }
 
         .card-body-content {
@@ -609,7 +609,7 @@
                 <img src="./images/lolog.jpg" class="splash-logo" alt="لوجو Hayah Kitchen" id="splashLogoImg">
             </div>
             <h2 class="splash-title">Hayah Kitchen</h2>
-            <p class="splash-chef-title">Cheef / SALAH</p>
+            <p class="splash-chef-title">Chef / SALAH</p>
             <p class="splash-slogan">أكل بيتي معمول بحب ❤️</p>
             
             <div class="premium-bar-track">
@@ -626,7 +626,7 @@
             <div class="identity-center-box">
                 <img src="./images/lolog.jpg" class="hero-logo" alt="لوجو Hayah Kitchen" id="headerLogoImg">
                 <h1 class="hero-title">Hayah Kitchen</h1>
-                <p class="hero-chef-title">Cheef / SALAH</p>
+                <p class="hero-chef-title">Chef / SALAH</p>
                 <p class="hero-slogan">أكل بيتي معمول بحب ❤️</p>
             </div>
 
@@ -794,7 +794,7 @@
             imagePaths.forEach(path => {
                 const img = new Image();
                 img.onload = updateProgress;
-                img.onerror = updateProgress; 
+                img.onerror = updateProgress; // نضمن العد والعبور حتى لو الصورة مفقودة على السيرفر
                 img.src = path;
             });
         }
@@ -824,6 +824,7 @@
 
             const menuListContainer = document.getElementById('menuList');
             
+            // فلترة وتحديد عداد الترتيب الداخلي للوجبات في أول قسم لتحديد الوجبة 2 و3 و5 والأخيرة لضبط كادرها
             let currentCategoryItems = menuData.filter(item => item.category === category);
             let totalInThisCat = currentCategoryItems.length;
             let currentItemIndexInCat = 0;
@@ -831,16 +832,20 @@
             menuListContainer.innerHTML = menuData.map((item, globalIdx) => {
                 if (item.category !== category) return '';
 
-                currentItemIndexInCat++; 
+                currentItemIndexInCat++; // ترتيب الوجبة الحالية داخل هذا القسم
                 let finalImageName = cleanItemForImage(item.name);
                 
-                // إلغاء أي فئات تكبير وتصغير لقسم العروض لتعود لحجمها الطبيعي المرفوع
+                // هندسة وفلترة أسماء الفئات المطلوبة لموازنة بُعد الكادر بدقة متناهية
                 let scaleClass = "";
                 
+                // فحص وتطبيق القواعد على القسم الأول فقط بناءً على طلبك هندسة أنس
                 const uniqueCategories = [...new Set(menuData.map(i => i.category))];
-                // إذا كان القسم الحالي هو أي قسم آخر غير قسم العروض (الأول)، يمكن تطبيق القواعد لو كانت مطلوبة مستقبلاً
                 if (category === uniqueCategories[0]) {
-                    scaleClass = ""; // فارغ تماماً بناءً على طلبك هندسة أنس (بدون تكبير أو تصغير في أول قسم)
+                    if (currentItemIndexInCat === 2 || currentItemIndexInCat === 3 || currentItemIndexInCat === totalInThisCat) {
+                        scaleClass = "scale-up-image"; // تقريب الوجبة الثانية والثالثة والأخيرة لتوحيد المسافة
+                    } else if (currentItemIndexInCat === 5) {
+                        scaleClass = "scale-down-image"; // تبيعد الوجبة الخامسة للوراء لتتناسب بصرياً مع البقية
+                    }
                 }
 
                 return `
@@ -988,11 +993,13 @@
             window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`);
         }
 
+        // الخطوة السحرية: تحديث تشغيل السيرفيس وركر لطلب البيانات من السيرفر أولاً بدلاً من الكاش الميت
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
                     .then(reg => {
                         console.log('Hayah Kitchen PWA Ready!');
+                        // إجبار التطبيق على فحص التحديثات في الخلفية فوراً عند كل زيارة
                         reg.update();
                     })
                     .catch(err => console.log('App Registration Failed:', err));
