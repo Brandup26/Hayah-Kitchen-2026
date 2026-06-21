@@ -70,7 +70,6 @@
             padding-top: 255px; 
         }
 
-        /* حماية العناصر من الظهور العشوائي قبل انتهاء التحميل */
         .super-fixed-header, .grid-menu-container, .restaurant-footer {
             display: none !important;
         }
@@ -79,9 +78,6 @@
         body.app-ready .grid-menu-container { display: grid !important; }
         body.app-ready .restaurant-footer { display: flex !important; }
 
-        /* ----------------------------------------------------
-           شاشة التحميل السينمائية
-        ------------------------------------------------------- */
         #premium-splash {
             position: fixed;
             top: 0;
@@ -194,9 +190,6 @@
             visibility: hidden !important;
         }
 
-        /* ----------------------------------------------------
-           الهيدر وتكبير صورة اللوجو الفخم
-        ------------------------------------------------------- */
         .super-fixed-header {
             position: fixed;
             top: 0;
@@ -335,9 +328,6 @@
             border-color: transparent;
         }
 
-        /* ----------------------------------------------------
-           كروت المنتجات وتعديل كادر الصور المطلوب بدقة لضبط التفاوت
-         ------------------------------------------------------- */
         .grid-menu-container {
             display: grid;
             grid-template-columns: 1fr;
@@ -376,13 +366,12 @@
             transition: transform 0.2s ease;
         }
 
-        /* فئات مخصصة تم حقنها برمجياً لضبط وموازنة كادر كل وجبة طلبتها بدقة */
         .premium-stack-card.scale-up-image .card-banner-wrapper img {
-            transform: scale(1.18) !important; /* تقريب كادر الوجبة الثانية والثالثة والأخيرة لتوحيد المسافة */
+            transform: scale(1.18) !important;
         }
 
         .premium-stack-card.scale-down-image .card-banner-wrapper img {
-            transform: scale(0.92) !important; /* تبيعد كادر الوجبة الخامسة للوراء ليتناسق مع الجميع */
+            transform: scale(0.92) !important;
         }
 
         .card-body-content {
@@ -450,9 +439,6 @@
             transition: all 0.45s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* ----------------------------------------------------
-           تصميم الفوتر بالأيقونات والبيانات الرسمية
-        ------------------------------------------------------- */
         .restaurant-footer {
             display: flex;
             flex-direction: column;
@@ -536,9 +522,6 @@
         }
         .dev-credit a { color: var(--premium-red); text-decoration: none; font-weight: 800; display: inline-block; margin-right: 4px; }
 
-        /* ----------------------------------------------------
-           مودال السلة
-        ------------------------------------------------------- */
         .modal {
             position: fixed; 
             top: 0; 
@@ -609,7 +592,7 @@
                 <img src="./images/lolog.jpg" class="splash-logo" alt="لوجو Hayah Kitchen" id="splashLogoImg">
             </div>
             <h2 class="splash-title">Hayah Kitchen</h2>
-            <p class="splash-chef-title">Chef / SALAH</p>
+            <p class="splash-chef-title">Cheef / SALAH</p>
             <p class="splash-slogan">أكل بيتي معمول بحب ❤️</p>
             
             <div class="premium-bar-track">
@@ -626,7 +609,7 @@
             <div class="identity-center-box">
                 <img src="./images/lolog.jpg" class="hero-logo" alt="لوجو Hayah Kitchen" id="headerLogoImg">
                 <h1 class="hero-title">Hayah Kitchen</h1>
-                <p class="hero-chef-title">Chef / SALAH</p>
+                <p class="hero-chef-title">Cheef / SALAH</p>
                 <p class="hero-slogan">أكل بيتي معمول بحب ❤️</p>
             </div>
 
@@ -692,7 +675,6 @@
 
     <script>
         const CACHE_BUST = Date.now();
-        // تم تحديث الرابط هنا
         const MENU_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQrC1hw6FzXbBcHD9MjbJ2Gtnq2xaRBG9tnlowxZxWwkNiqfUi20OjQvpfNGZAO-nu5TR2u9x3sngSG/pub?output=csv&t=' + CACHE_BUST;
         const WHATSAPP_NUMBER = "201211770672"; 
         
@@ -725,7 +707,10 @@
 
         async function fetchMenuData() {
             try {
-                const response = await fetch(MENU_CSV_URL, { cache: "no-store" });
+                const response = await fetch(MENU_CSV_URL, { 
+                    cache: "no-store",
+                    headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+                });
                 const buffer = await response.arrayBuffer();
                 const decoder = new TextDecoder('utf-8'); 
                 const csvText = decoder.decode(buffer);
@@ -738,7 +723,7 @@
                     let category = columns[0]?.replace(/"/g, '').trim() || "";
                     let name = columns[1]?.replace(/"/g, '').trim() || "";
                     let desc = columns[2]?.replace(/"/g, '').trim() || "وجبة شهية ومميزة من مطبخ Hayah Kitchen الأصيل";
-                    let price = columns[3]?.replace(/"/g, '').trim() || "0";
+                    let price = columns[3]?.replace(/"/g, '').trim() || "";
 
                     if (!category || !name) return null;
                     return { category, name, desc, price };
@@ -832,9 +817,9 @@
 
                 currentItemIndexInCat++; 
                 let finalImageName = cleanItemForImage(item.name);
+                let priceDisplay = (category === 'العروض' && (!item.price || item.price == "0")) ? "" : `${item.price} ج.م`;
                 
                 let scaleClass = "";
-                
                 const uniqueCategories = [...new Set(menuData.map(i => i.category))];
                 if (category === uniqueCategories[0]) {
                     if (currentItemIndexInCat === 2 || currentItemIndexInCat === 3 || currentItemIndexInCat === totalInThisCat) {
@@ -852,7 +837,7 @@
                         <div class="card-body-content">
                             <div class="card-header-row">
                                 <h3 class="item-main-title">${item.name}</h3>
-                                <span class="item-badge-price">${item.price} ج.م</span>
+                                ${priceDisplay ? `<span class="item-badge-price">${priceDisplay}</span>` : ''}
                             </div>
                             <p class="item-description-text">${item.desc}</p>
                             <button class="stack-action-btn" onclick="addItemToCart(event, this, ${globalIdx})">إضافة للسلة 🛒</button>
@@ -917,13 +902,14 @@
             if (listContainer) {
                 listContainer.innerHTML = cart.map((item, idx) => {
                     let cartImageName = cleanItemForImage(item.name);
+                    let itemTotal = item.price ? (parseFloat(item.price) * item.qty) : 0;
                     return `
                         <div class="cart-item-card">
                             <div class="cart-item-left">
                                 <img src="./images/${cartImageName}.jpg?v=${CACHE_BUST}" class="cart-item-img" onerror="this.src='https://placehold.co/100x100/e11d24/ffffff?text=H'">
                                 <div class="cart-item-info">
                                     <span class="cart-item-name">${item.name} (x${item.qty})</span>
-                                    <span class="cart-item-price">${parseFloat(item.price) * item.qty} ج.م</span>
+                                    <span class="cart-item-price">${itemTotal > 0 ? itemTotal + ' ج.م' : 'متاح حالياً'}</span>
                                 </div>
                             </div>
                             <span class="remove-btn" onclick="removeItemFromCart(${idx})">حذف</span>
@@ -932,7 +918,7 @@
                 }).join('');
             }
 
-            const foodTotal = cart.reduce((acc, curr) => acc + (parseFloat(curr.price) * curr.qty), 0);
+            const foodTotal = cart.reduce((acc, curr) => acc + (parseFloat(curr.price || 0) * curr.qty), 0);
             const totalEl = document.getElementById('foodTotalAmount');
             if (totalEl) totalEl.innerText = `${foodTotal} ج.م`;
         }
@@ -980,9 +966,9 @@
             msg += `🏠 العنوان: ${addr}\n\n`;
             msg += `📋 المنتجات المطلوبة:\n`;
 
-            msg += cart.map(i => `- ${i.name} (العدد: ${i.qty}) -> ${parseFloat(i.price) * i.qty} ج.م`).join('\n');
+            msg += cart.map(i => `- ${i.name} (العدد: ${i.qty}) ${i.price ? '-> ' + parseFloat(i.price) * i.qty + ' ج.م' : ''}`).join('\n');
 
-            const foodTotal = cart.reduce((acc, curr) => acc + (parseFloat(curr.price) * curr.qty), 0);
+            const foodTotal = cart.reduce((acc, curr) => acc + (parseFloat(curr.price || 0) * curr.qty), 0);
             msg += `\n\n💰 الإجمالي الكلي للفاتورة: ${foodTotal} ج.م\n`;
             msg += `___\n❤️ أكل بيتي معمول بحب وطعم ملوكي مميز من Hayah Kitchen!`;
 
