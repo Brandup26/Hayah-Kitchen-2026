@@ -12,8 +12,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Hayah Kitchen">
-    
     <link rel="apple-touch-icon" href="./images/lolog.jpg">
+    <link rel="apple-touch-startup-image" href="./images/lolog.jpg">
     
     <link rel="manifest" href="manifest.json">
 
@@ -22,7 +22,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <style>
-        /* الهوية البصرية - الوضع المضيء */
         :root {
             --premium-red: #e11d24;       
             --premium-red-dark: #a91217;  
@@ -39,7 +38,6 @@
             --box-bg: #f1f5f9;
         }
 
-        /* ألوان الوضع الداكن */
         body.dark-mode {
             --bg-dark: #070708;           
             --card-dark: #121215;         
@@ -364,6 +362,12 @@
             object-fit: cover; 
             mix-blend-mode: multiply; 
             transition: transform 0.2s ease;
+        }
+
+        /* تعديلات العرض الطبيعي للقسم الأول */
+        .premium-stack-card.natural-image .card-banner-wrapper img {
+            transform: scale(1) !important;
+            mix-blend-mode: normal !important;
         }
 
         .premium-stack-card.scale-up-image .card-banner-wrapper img {
@@ -754,31 +758,25 @@
             const barFill = document.getElementById("splash-bar");
 
             let progress = 0;
+            // توقيت التحميل: 3.5 ثانية (3500 ملي ثانية)
+            let duration = 3500; 
+            let intervalTime = duration / 100;
+            
             let interval = setInterval(() => {
                 progress += 1;
                 if (progress > 100) {
                     clearInterval(interval);
+                    hideSplashScreen();
+                    const uniqueCategories = [...new Set(menuData.map(item => item.category))];
+                    renderCategoryNavigation(uniqueCategories);
                     return;
                 }
                 if (counterNum) counterNum.innerText = progress;
                 if (barFill) barFill.style.width = progress + "%";
-            }, 30); 
-
-            function updateProgress() {
-                loadedCount++;
-                if (loadedCount >= totalImages) {
-                    setTimeout(() => {
-                        hideSplashScreen();
-                        const uniqueCategories = [...new Set(menuData.map(item => item.category))];
-                        renderCategoryNavigation(uniqueCategories);
-                    }, 3000); 
-                }
-            }
+            }, intervalTime); 
 
             imagePaths.forEach(path => {
                 const img = new Image();
-                img.onload = updateProgress;
-                img.onerror = updateProgress; 
                 img.src = path;
             });
         }
@@ -807,6 +805,7 @@
             }
 
             const menuListContainer = document.getElementById('menuList');
+            const uniqueCategories = [...new Set(menuData.map(i => i.category))];
             
             let currentCategoryItems = menuData.filter(item => item.category === category);
             let totalInThisCat = currentCategoryItems.length;
@@ -820,8 +819,10 @@
                 let priceDisplay = (category === 'العروض' && (!item.price || item.price == "0")) ? "" : `${item.price} ج.م`;
                 
                 let scaleClass = "";
-                const uniqueCategories = [...new Set(menuData.map(i => i.category))];
+                // القسم الأول (العروض) صور طبيعية
                 if (category === uniqueCategories[0]) {
+                    scaleClass = "natural-image";
+                } else {
                     if (currentItemIndexInCat === 2 || currentItemIndexInCat === 3 || currentItemIndexInCat === totalInThisCat) {
                         scaleClass = "scale-up-image"; 
                     } else if (currentItemIndexInCat === 5) {
