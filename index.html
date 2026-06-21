@@ -275,10 +275,15 @@
             position: relative;
         }
         
-        .cart-trigger.cart-glow-success {
-            background: var(--premium-green) !important;
-            border-color: var(--premium-green);
-            color: #ffffff !important;
+        /* تأثير اهتزاز السلة الفخم بدون أي تلوين أخضر */
+        .cart-trigger.cart-shake-active {
+            animation: cartShakeAnim 0.4s ease-in-out;
+        }
+
+        @keyframes cartShakeAnim {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            20%, 60% { transform: scale(1.1) rotate(-10deg); }
+            40%, 80% { transform: scale(1.1) rotate(10deg); }
         }
 
         .badge {
@@ -340,7 +345,7 @@
         }
 
         .premium-stack-card {
-            background: var(--card-dark);
+            background: #ffffff; /* إلزام الكارت باللون الأبيض الصافي دائماً لمنع الـ Off-white */
             border-radius: 22px;
             overflow: hidden;
             display: flex;
@@ -349,24 +354,23 @@
             box-shadow: 0 8px 24px rgba(0,0,0,0.02);
         }
 
-        /* حاوية الصورة: تم تعديل الارتفاع والمساحات لتكبير العرض الإجمالي للوجبة */
+        /* حاوية الصورة: تم تثبيت درجة اللون الأبيض الصافي بالكامل */
         .card-banner-wrapper {
             width: 100%;
-            height: 200px; /* زيادة الارتفاع ليعطي الوجبات مساحة ظهور أكبر وشكل أشيك */
-            background: var(--card-dark); /* جعل خلفية الحاوية بيضاء متناسقة مع الكارت */
+            height: 200px; 
+            background: #ffffff; /* لون أبيض ناصع يطابق خلفية الكارت تماماً */
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 8px; /* تقليل الهوامش الداخلية قليلًا لتكبير حجم الصورة */
+            padding: 0px; /* إلغاء الحواف الداخلية للسماح بعمل زووم كامل يخفي الأطراف السوداء */
         }
         
-        /* الصورة: تم تكبير حجم العرض والارتفاع لملء المساحة وتظهر الوجبة ممتازة وكبيرة */
+        /* الصورة: تحويلها لـ cover لتقوم بعمل زووم وتكبير ذكي يخفي الحواف السوداء والأطراف المشوهة تماماً */
         .card-banner-wrapper img {
-            width: 96%; 
-            height: 96%; 
-            object-fit: contain; /* يضمن ظهور البيتزا والوجبات كاملة ومستديرة بدون قص */
-            border-radius: 12px; /* انحناء خفيف ناعم لأطراف الصور */
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; /* التكبير والملء التلقائي للتخلص من الأجزاء السوداء نهائياً في الصور المرفوعة */
         }
 
         .card-body-content {
@@ -375,6 +379,7 @@
             flex-direction: column;
             gap: 8px;
             text-align: right;
+            background: #ffffff; /* تأكيد بياض ناصع متناسق في كامل جسد الكارت */
         }
 
         .card-header-row {
@@ -420,8 +425,8 @@
         }
 
         .stack-action-btn.added-success {
-            background: linear-gradient(135deg, #065f46, var(--premium-green)) !important;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25) !important;
+            background: linear-gradient(135deg, var(--premium-red), var(--premium-red-dark)) !important; /* الحفاظ على اللون الفخم دون التغيير للأخضر */
+            box-shadow: 0 4px 14px rgba(190, 18, 60, 0.15) !important;
         }
 
         .fly-item {
@@ -673,7 +678,6 @@
     </div>
 
     <script>
-        // تم إضافة متغير فريد للوقت الحالي تمنع كاش المتصفح نهائيًا لتظهر التعديلات فورا
         const CACHE_BUST = Date.now();
         const MENU_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT6wLpP2WK8y5xxWWs0r-q-aLw60OIfXtm3bsyyFFsU_SK__bAxvNozcSbENez0Iw/pub?output=csv&t=' + CACHE_BUST;
         const WHATSAPP_NUMBER = "201211770672"; 
@@ -832,8 +836,9 @@
 
             const cartBtn = document.getElementById('cartBtn');
             if (cartBtn) {
-                cartBtn.classList.add('cart-glow-success');
-                setTimeout(() => cartBtn.classList.remove('cart-glow-success'), 1000);
+                // إطلاق أنيميشن الاهتزاز الفخم فقط بدون تلوين أخضر
+                cartBtn.classList.add('cart-shake-active');
+                setTimeout(() => cartBtn.classList.remove('cart-shake-active'), 400);
 
                 const fly = document.createElement('div');
                 fly.className = 'fly-item'; fly.innerHTML = '✨';
