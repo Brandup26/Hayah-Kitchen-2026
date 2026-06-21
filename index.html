@@ -95,7 +95,7 @@
             align-items: center;
             opacity: 1;
             visibility: visible;
-            transition: opacity 0.5s ease, visibility 0.5;
+            transition: opacity 0.5s ease, visibility 0.5s;
         }
 
         .splash-container {
@@ -442,12 +442,6 @@
             box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3) !important;
         }
 
-        /* تنسيق مخصص لزر الاستفسار عند اختيار سعر "حسب الطلب" */
-        .stack-action-btn.custom-ask-btn {
-            background: linear-gradient(135deg, #25D366, #128C7E) !important;
-            box-shadow: 0 4px 14px rgba(37, 211, 102, 0.2) !important;
-        }
-
         .fly-item {
             position: fixed; z-index: 99999; pointer-events: none;
             width: 24px; height: 24px; background: var(--premium-green);
@@ -546,16 +540,30 @@
            مودال السلة
         ------------------------------------------------------- */
         .modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); z-index: 2000; display: none; 
-            justify-content: center; align-items: flex-end; 
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(0,0,0,0.7); 
+            z-index: 2000;
+            display: none; 
+            justify-content: center; 
+            align-items: flex-end; 
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
 
         .modal-content {
-            background: var(--card-dark); width: 100%; max-width: 550px;
-            padding: 24px 20px; border-radius: 28px 28px 0 0; max-height: 85vh; 
-            overflow-y: auto; color: var(--text-main); border-top: 4px solid var(--premium-red);
+            background: var(--card-dark); 
+            width: 100%; 
+            max-width: 550px;
+            padding: 24px 20px; 
+            border-radius: 28px 28px 0 0;
+            max-height: 85vh; 
+            overflow-y: auto; 
+            color: var(--text-main);
+            border-top: 4px solid var(--premium-red);
             box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
         }
 
@@ -684,6 +692,7 @@
 
     <script>
         const CACHE_BUST = Date.now();
+        const MENU_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT6wLpP2WK8y5xxWWs0r-q-aLw60OIfXtm3bsyyFFsU_SK__bAxvNozcSbENez0Iw/pub?output=csv&t=' + CACHE_BUST;
         const WHATSAPP_NUMBER = "201211770672"; 
         
         let menuData = [];
@@ -715,10 +724,7 @@
 
         async function fetchMenuData() {
             try {
-                const dynamicBust = Date.now();
-                const freshUrl = 'https://docs.google.com/spreadsheets/d/1wZf28FskQ9088MCHoJ-5uEwE98TfHbe4y9M6Cexu2O0/gviz/tq?tqx=out:csv&sheet=Sheet1&t=' + dynamicBust;
-
-                const response = await fetch(freshUrl, { cache: "no-store" });
+                const response = await fetch(MENU_CSV_URL, { cache: "no-store" });
                 const buffer = await response.arrayBuffer();
                 const decoder = new TextDecoder('utf-8'); 
                 const csvText = decoder.decode(buffer);
@@ -761,19 +767,27 @@
             const counterNum = document.getElementById("splash-counter-num");
             const barFill = document.getElementById("splash-bar");
 
+            // تعديل: دالة تحديث الشريط ليأخذ 3 ثواني
+            let progress = 0;
+            let interval = setInterval(() => {
+                progress += 1;
+                if (progress > 100) {
+                    clearInterval(interval);
+                    return;
+                }
+                if (counterNum) counterNum.innerText = progress;
+                if (barFill) barFill.style.width = progress + "%";
+            }, 30); // 30ms * 100 = 3000ms = 3 ثواني
+
             function updateProgress() {
                 loadedCount++;
-                let currentPercent = Math.floor((loadedCount / totalImages) * 100);
-                
-                if (counterNum) counterNum.innerText = currentPercent;
-                if (barFill) barFill.style.width = currentPercent + "%";
-
                 if (loadedCount >= totalImages) {
+                    // ننتظر انتهاء مؤقت الـ 3 ثواني قبل الإخفاء
                     setTimeout(() => {
                         hideSplashScreen();
                         const uniqueCategories = [...new Set(menuData.map(item => item.category))];
                         renderCategoryNavigation(uniqueCategories);
-                    }, 250); 
+                    }, 3000); 
                 }
             }
 
@@ -809,6 +823,7 @@
             }
 
             const menuListContainer = document.getElementById('menuList');
+            
             let currentCategoryItems = menuData.filter(item => item.category === category);
             let totalInThisCat = currentCategoryItems.length;
             let currentItemIndexInCat = 0;
@@ -818,6 +833,7 @@
 
                 currentItemIndexInCat++; 
                 let finalImageName = cleanItemForImage(item.name);
+                
                 let scaleClass = "";
                 
                 const uniqueCategories = [...new Set(menuData.map(i => i.category))];
@@ -829,15 +845,6 @@
                     }
                 }
 
-                // 🌟 حماية وفحص السعر الذكي لمنع الانهيار:
-                let isCustomPrice = isNaN(parseFloat(item.price));
-                let displayPrice = isCustomPrice ? item.price : `${item.price} ج.م`;
-                
-                // زر السلة يتغير ديناميكياً لطلب الاستفسار إذا كان السعر غير رقمي
-                let actionButtonHTML = isCustomPrice 
-                    ? `<button class="stack-action-btn custom-ask-btn" onclick="askCustomProduct('${item.name}')">استفسار عبر واتساب 💬</button>`
-                    : `<button class="stack-action-btn" onclick="addItemToCart(event, this, ${globalIdx})">إضافة للسلة 🛒</button>`;
-
                 return `
                     <div class="premium-stack-card ${scaleClass}">
                         <div class="card-banner-wrapper">
@@ -846,10 +853,10 @@
                         <div class="card-body-content">
                             <div class="card-header-row">
                                 <h3 class="item-main-title">${item.name}</h3>
-                                <span class="item-badge-price">${displayPrice}</span>
+                                <span class="item-badge-price">${item.price} ج.م</span>
                             </div>
                             <p class="item-description-text">${item.desc}</p>
-                            ${actionButtonHTML}
+                            <button class="stack-action-btn" onclick="addItemToCart(event, this, ${globalIdx})">إضافة للسلة 🛒</button>
                         </div>
                     </div>
                 `;
@@ -859,10 +866,6 @@
         function addItemToCart(e, button, globalIdx) {
             e.stopPropagation();
             const item = menuData[globalIdx];
-            
-            // حماية لمنع إضافة عناصر "حسب الطلب" بالخطأ للسلة العادية
-            if (isNaN(parseFloat(item.price))) return;
-
             const existingItem = cart.find(c => c.name === item.name);
             
             if (existingItem) {
@@ -964,14 +967,6 @@
             }
         });
 
-        // دالة مخصصة لإرسال استفسار مباشر للوجبات ذات الأسعار المتغيرة
-        function askCustomProduct(itemName) {
-            let msg = `✨ استفسار عن عرض خاص - منيو Hayah Kitchen ✨\n\n`;
-            msg += `بخصوص وجبة/عرض: *${itemName}*\n`;
-            msg += `كنت حابب أستفسر عن السعر الحالي المتاح وتفاصيل العرض الملوكي ده؟ 😋`;
-            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`);
-        }
-
         function sendToWA() {
             const name = document.getElementById('uName').value.trim();
             const phone = document.getElementById('uPhone').value.trim();
@@ -997,11 +992,8 @@
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(reg => {
-                        console.log('Hayah Kitchen PWA Ready!');
-                        reg.update();
-                    })
+                navigator.serviceWorker.register(`sw.js?v=${CACHE_BUST}`)
+                    .then(reg => console.log('Hayah Kitchen App Registered Successfully!', reg))
                     .catch(err => console.log('App Registration Failed:', err));
             });
         }
