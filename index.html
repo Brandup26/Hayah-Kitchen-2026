@@ -725,9 +725,9 @@
 
         async function fetchMenuData() {
             try {
-                // 🌟 التعديل النهائي المباشر: سحب الداتا الحية أوتوماتيكياً بدون تأخير النشر
+                // 🌟 التعديل السحري: ربط كود الأندكس برابط جوجل شيت الفريش الجديد مع حماية الكاش بستنج الديناميكي
                 const dynamicBust = Date.now();
-                const freshUrl = 'https://docs.google.com/spreadsheets/d/1wZf28FskQ9088MCHoJ-5uEwE98TfHbe4y9M6Cexu2O0/export?format=csv&id=1wZf28FskQ9088MCHoJ-5uEwE98TfHbe4y9M6Cexu2O0&gid=0&t=' + dynamicBust;
+                const freshUrl = 'https://docs.google.com/spreadsheets/d/1wZf28FskQ9088MCHoJ-5uEwE98TfHbe4y9M6Cexu2O0/gviz/tq?tqx=out:csv&sheet=Sheet1&t=' + dynamicBust;
 
                 const response = await fetch(freshUrl, { cache: "no-store" });
                 const buffer = await response.arrayBuffer();
@@ -993,7 +993,7 @@
             window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`);
         }
 
-        // الخطوة السحرية: تحديث تشغيل السيرفيس وركر لطلب البيانات من السيرفر أولاً بدلاً من الكاش الميت
+        // الخطوة السحرية: تحديث تشغيل السيرفيس وركر لطلب البيانات من السيرفر أولاً بدلاف من الكاش الميت
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
