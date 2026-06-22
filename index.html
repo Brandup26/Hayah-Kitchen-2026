@@ -590,6 +590,15 @@
     </style>
 </head>
 <body>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    registration.unregister();
+                }
+            });
+        }
+    </script>
 
     <div id="premium-splash">
         <div class="splash-container">
@@ -759,7 +768,6 @@
             const barFill = document.getElementById("splash-bar");
 
             let progress = 0;
-            // توقيت التحميل: 3.5 ثانية (3500 ملي ثانية)
             let duration = 3500; 
             let intervalTime = duration / 100;
             
@@ -820,7 +828,6 @@
                 let priceDisplay = (category === 'العروض' && (!item.price || item.price == "0")) ? "" : `${item.price} ج.م`;
                 
                 let scaleClass = "";
-                // القسم الأول (العروض) صور طبيعية
                 if (category === uniqueCategories[0]) {
                     scaleClass = "natural-image";
                 } else {
@@ -975,14 +982,6 @@
             msg += `___\n❤️ أكل بيتي معمول بحب وطعم ملوكي مميز من Hayah Kitchen!`;
 
             window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`);
-        }
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register(`sw.js?v=${CACHE_BUST}`)
-                    .then(reg => console.log('Hayah Kitchen App Registered Successfully!', reg))
-                    .catch(err => console.log('App Registration Failed:', err));
-            });
         }
     </script>
 </body>
