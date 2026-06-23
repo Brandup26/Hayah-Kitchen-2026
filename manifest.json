@@ -1,0 +1,20 @@
+{
+  "name": "Hayah Kitchen",
+  "short_name": "Hayah",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#070708",
+  "theme_color": "#e11d24",
+  "icons": [
+    {
+      "src": "./images/lolog.jpg",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./images/lolog.jpg",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
