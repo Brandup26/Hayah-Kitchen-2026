@@ -40,7 +40,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; transition: background 0.3s, color 0.3s; }
         body { background-color: var(--bg); color: var(--main-text); line-height: 1.6; overflow-x: hidden; padding-bottom: 90px; }
 
-        /* --- شاشة الترحيب (لوجو دائري نقي بدون حواف) --- */
+        /* --- شاشة الترحيب --- */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--white); z-index: 9999;
@@ -84,7 +84,7 @@
         @keyframes progress { from { width: 0; } to { width: 100%; } }
         .splash-hidden { transform: translateY(-100%); pointer-events: none; }
 
-        /* --- الهيدر (لوجو دائري نقي) --- */
+        /* --- الهيدر --- */
         header { 
             background: var(--header-bg); 
             position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 15px rgba(0,0,0,0.04);
@@ -157,7 +157,6 @@
         .order-btn.added { background: var(--success-dark); color: white; box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3); }
         .fly-item { position: fixed; z-index: 9999; pointer-events: none; width: 30px; height: 30px; background: var(--accent); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1); }
 
-        /* شريط التثبيت الاحترافي لكل زائر يفتح اللينك */
         #install-bar {
             position: fixed; bottom: 0; left: 0; width: 100%; background: var(--accent);
             color: white; padding: 16px 20px; display: none; justify-content: space-between;
@@ -565,13 +564,21 @@
                 
                 menuData = rows.map(row => {
                     const col = row.split(',');
-                    const itemName = col[1]?.trim() || "";
+                    const rawName = col[1]?.trim() || "";
+                    
+                    // استخراج اسم الصورة باللغة الإنجليزية فقط من الأقواس (مثال: (Margherita) مارجريتا -> Margherita)
+                    let imgFileName = rawName;
+                    const match = rawName.match(/\(([^)]+)\)/);
+                    if (match && match[1]) {
+                        imgFileName = match[1].trim();
+                    }
+
                     return { 
                         category: col[0]?.trim(), 
-                        name: itemName, 
+                        name: rawName, 
                         desc: col[2]?.trim() || "", 
                         price: col[3]?.trim() || "", 
-                        img: `${IMAGES_PATH}${itemName}.jpg` // صور الأصناف بصيغة .jpg بدقة
+                        img: `${IMAGES_PATH}${imgFileName}.jpg` // ربط الصورة بالاسم الإنجليزي الصحيح وبامتداد .jpg
                     };
                 }).filter(i => i.name);
                 
@@ -965,7 +972,6 @@
             }
         }
 
-        // تفعيل ظهور شريط التثبيت لكل زائر يفتح اللينك فوراً
         function initPWA() {
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('sw.js').then(reg => {
@@ -983,14 +989,8 @@
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
-            // إظهار الشريط للجميع طالما التطبيق لم يتم تثبيته بعد على الشاشة الرئيسية
             if (!isStandalone) {
-                if (isIOS) {
-                    document.getElementById('install-bar').style.display = 'flex';
-                } else {
-                    // للأندرويد والمتصفحات الأخرى يظهر الشريط افتراضياً ليتمكن الزائر من التثبيت
-                    document.getElementById('install-bar').style.display = 'flex';
-                }
+                document.getElementById('install-bar').style.display = 'flex';
             }
         }
 
@@ -1014,7 +1014,7 @@
                     deferredPrompt = null;
                 });
             } else {
-                alert("للتثبيت، يجوز الضغط على قائمة المتصفح (النقاط الثلاث بالأعلى) ثم اختيار 'إضافة إلى الشاشة الرئيسية' أو 'تثبيت التطبيق'.");
+                alert("للتثبيت، يرجى الضغط على قائمة المتصفح (النقاط الثلاث بالأعلى) ثم اختيار 'إضافة إلى الشاشة الرئيسية' أو 'تثبيت التطبيق'.");
             }
         }
 
