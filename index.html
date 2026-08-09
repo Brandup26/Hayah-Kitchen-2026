@@ -140,16 +140,21 @@
         
         .food-card { background: var(--white); border-radius: 24px; margin-bottom: 16px; display: flex; padding: 20px; gap: 18px; align-items: flex-start; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.03); transition: opacity 0.3s ease; }
         .food-card.disabled-item { opacity: 0.5; filter: grayscale(0.3); }
-        .item-img-box { width: 95px; height: 95px; border-radius: 18px; overflow: hidden; background: #dcdfe3; flex-shrink: 0; }
+        
+        /* تكبير صور الأصناف العادية سنة كمان (من 95px إلى 115px) */
+        .item-img-box { width: 115px; height: 115px; border-radius: 18px; overflow: hidden; background: #dcdfe3; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
         .item-img-box img { width: 100%; height: 100%; object-fit: cover; }
-        .food-info { flex: 1; position: relative; display: flex; flex-direction: column; min-height: 95px; }
+        
+        .food-info { flex: 1; position: relative; display: flex; flex-direction: column; min-height: 115px; }
         .food-name { font-weight: 700; font-size: 0.95rem; color: var(--main-text); padding-left: 15px; }
         .food-desc { font-size: 0.8rem; color: var(--desc-text); line-height: 1.4; margin-top: 4px; margin-bottom: 8px; }
         .food-price { font-weight: 800; color: var(--yellow-gold); font-size: 0.95rem; white-space: nowrap; display: inline-block; }
         
+        /* قسم العروض: إظهار الصورة كاملة تماماً بدون أي قص (contain) */
         .food-card.offer-card { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
-        .offer-card .item-img-box { width: 100%; height: 240px; border-radius: 0; }
-        .offer-card .food-info { padding: 20px; width: 100%; }
+        .offer-card .item-img-box { width: 100%; height: 260px; border-radius: 0; background: rgba(0,0,0,0.02); }
+        .offer-card .item-img-box img { width: 100%; height: 100%; object-fit: contain; }
+        .offer-card .food-info { padding: 20px; width: 100%; min-height: auto; }
         .offer-card .food-name { font-size: 1.1rem; padding-left: 0; font-weight: 800; color: var(--accent); }
 
         .order-btn { background: var(--accent); color: white; border: none; padding: 8px 18px; border-radius: 16px; font-size: 0.85rem; font-weight: 800; cursor: pointer; transition: background 0.3s ease, box-shadow 0.3s ease; }
@@ -566,7 +571,6 @@
                     const col = row.split(',');
                     const rawName = col[1]?.trim() || "";
                     
-                    // استخراج اسم الصورة باللغة الإنجليزية فقط من الأقواس (مثال: (Margherita) مارجريتا -> Margherita)
                     let imgFileName = rawName;
                     const match = rawName.match(/\(([^)]+)\)/);
                     if (match && match[1]) {
@@ -578,7 +582,7 @@
                         name: rawName, 
                         desc: col[2]?.trim() || "", 
                         price: col[3]?.trim() || "", 
-                        img: `${IMAGES_PATH}${imgFileName}.jpg` // ربط الصورة بالاسم الإنجليزي الصحيح وبامتداد .jpg
+                        img: `${IMAGES_PATH}${imgFileName}.jpg` 
                     };
                 }).filter(i => i.name);
                 
