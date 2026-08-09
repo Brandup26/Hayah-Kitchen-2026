@@ -1,20 +1,16 @@
 {
-  "name": "Hayah Kitchen",
-  "short_name": "Hayah",
-  "start_url": "./index.html",
+  "name": "CHEF SALAH",
+  "short_name": "HayahKitchen",
+  "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#070708",
-  "theme_color": "#e11d24",
+  "background_color": "#eaecef",
+  "theme_color": "#e50914",
   "icons": [
     {
-      "src": "./images/lolog.jpg",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "./images/lolog.jpg",
-      "sizes": "512x512",
-      "type": "image/png"
+      "src": "images/logohayah.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
