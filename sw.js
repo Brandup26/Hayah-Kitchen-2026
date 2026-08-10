@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hayah-kitchen-v7.6';
+const CACHE_NAME = 'hayah-kitchen-v8.6';
 const assetsToCache = [
   'index.html',
   'manifest.json',

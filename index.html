@@ -138,7 +138,7 @@
         
         .menu-list { padding: 15px; max-width: 600px; margin: auto; }
         
-        /* تقليل مساحة الكروت للأقسام العادية بدون التأثير على حجم الصورة والنصوص */
+        /* تقليل مساحة الكروت للأقسام العادية بدون المساس بحجم الصورة أو النصوص */
         .food-card { background: var(--white); border-radius: 20px; margin-bottom: 12px; display: flex; padding: 12px 16px; gap: 14px; align-items: center; box-shadow: 0 3px 12px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.03); transition: opacity 0.3s ease; }
         .food-card.disabled-item { opacity: 0.5; filter: grayscale(0.3); }
         
@@ -491,7 +491,7 @@
             const { doc, onSnapshot, collection } = window.firebaseModules;
             const db = window.db;
 
-            // طلب صلاحية عرض الإشعارات للنظام لضمان ظهور الرسالة النصية في شاشة الموبايل
+            // طلب صلاحية عرض الإشعارات للنظام لضمان ظهور الرسالة النصية تماماً مثل الصورة
             if ("Notification" in window && Notification.permission !== "granted") {
                 Notification.requestPermission();
             }
@@ -536,15 +536,25 @@
                         // تشغيل التنبيه الصوتي المميز والعالي
                         playHighPriorityOrderAlert();
                         
-                        // إرسال إشعار نصي مكتوب في شاشة الموبايل لصاحب المطعم
+                        // إرسال الإشعار النصي المطابق للصورة تماماً
                         if ("Notification" in window && Notification.permission === "granted") {
                             try {
-                                new Notification("🚨 تنبيه طلب جديد!", {
-                                    body: "تم طلب أوردر جديد من ابلكيشن HAYAH KITCHEN، افتح لوحة التحكم لمتابعة التفاصيل.",
+                                const notifTitle = "أوردر جديد 🍗 - HAYAH KITCHEN";
+                                const notifOptions = {
+                                    body: "🔔 هناك أوردر جديد تم تأكيده للتو من العميل!",
                                     icon: "./images/logohayah.png",
-                                    tag: "hayah_new_order",
+                                    badge: "./images/logohayah.png",
+                                    tag: "hayah_new_order_exact",
                                     requireInteraction: true
-                                });
+                                };
+
+                                if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                                    navigator.serviceWorker.ready.then(registration => {
+                                        registration.showNotification(notifTitle, notifOptions);
+                                    });
+                                } else {
+                                    new Notification(notifTitle, notifOptions);
+                                }
                             } catch (err) {
                                 console.log("Push notification error:", err);
                             }
